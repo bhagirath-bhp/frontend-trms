@@ -112,7 +112,11 @@ const BaseMap = () => {
           'text-justify': 'center',
           'text-padding': 8,
           'text-letter-spacing': 0.05,
-          'text-font': ['Noto Sans']
+          'text-font': ['Roboto'],
+          'icon-image': 'circle-15',
+          'icon-size': 1.5,
+          'icon-allow-overlap': true,
+          'text-allow-overlap': true,
         },
         paint: {
           'text-color': '#ffffff',
@@ -136,7 +140,8 @@ const BaseMap = () => {
           'fill-color': '#2563eb',
           'fill-opacity': 0.25,
         }
-      });
+      }, 'territories-labels' // place below labels
+      );
 
       // outline layer
       m.addLayer({
@@ -184,13 +189,12 @@ const BaseMap = () => {
         const lat = e.lngLat.lat;
 
         const territory = await getTerritoryByLatLng(lng, lat);
-        setTerritory(territory);
-
-        if (!territory?.geometry) {
+        if (!territory) {
           clearPolygon();
           setDrawerOpen(false);
           return;
         }
+        setTerritory(territory);
 
         if (territory?.geometry) {
           plotPolygon(territory.geometry);
@@ -297,15 +301,6 @@ const BaseMap = () => {
       </div>
 
       <div className='absolute top-16 md:top-4  left-[10%] md:left-[33%] w-full max-w-xs px-4 flex gap-2 '>
-        {/* <Button className='bg-white rounded-full hover:bg-slate-200 text-gray-800 px-2 py-2  shadow-lg border-0' onClick={() => setShowTerritories(!showTerritories)}>
-          Explore Territories
-        </Button> */}
-        <Button className='bg-white rounded-full hover:bg-slate-200 text-gray-800 px-2 py-2  shadow-lg border-0' onClick={() => setShowPulses(!showPulses)}>
-          Explore Pulses
-        </Button>
-        <Button className='bg-white rounded-full hover:bg-slate-200 text-gray-800 px-2 py-2  shadow-lg border-0' onClick={() => setShowProjects(!showProjects)}>
-          Explore Project
-        </Button>
       </div>
       {/* Layer Switcher */}
       <div className="absolute bottom-4 right-4 z-50">
@@ -407,17 +402,6 @@ const BaseMap = () => {
         </div>
       </CustomDrawer>
 
-      <CustomDrawer open={showPulses} onOpenChange={setShowPulses} handleSearch={handleSearch} direction="left">
-        <div >
-          <ViewPulses />
-        </div>
-      </CustomDrawer>
-
-      <CustomDrawer open={showProjects} onOpenChange={setShowProjects} handleSearch={handleSearch} direction="left">
-        <div >
-          <ViewProjects />
-        </div>
-      </CustomDrawer>
       <CustomDrawer open={showProjects} onOpenChange={setShowProjects} handleSearch={handleSearch} direction="left">
         <div >
           <ViewProjects />

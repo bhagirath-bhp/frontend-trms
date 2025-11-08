@@ -40,6 +40,58 @@ const projectsData = [
   },
 ]
 
+const images = [
+  "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg",
+  "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg",
+  "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg",
+  "https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg",
+  "https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg",
+  "https://images.pexels.com/photos/534151/pexels-photo-534151.jpeg",
+  "https://images.pexels.com/photos/323775/pexels-photo-323775.jpeg",
+  "https://images.pexels.com/photos/259600/pexels-photo-259600.jpeg",
+  "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg",
+  "https://images.pexels.com/photos/259597/pexels-photo-259597.jpeg",
+  "https://images.pexels.com/photos/2462015/pexels-photo-2462015.jpeg",
+  "https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg",
+  "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg",
+  "https://images.pexels.com/photos/36367/house-building-lawn-green.jpg",
+  "https://images.pexels.com/photos/280222/pexels-photo-280222.jpeg",
+  "https://images.pexels.com/photos/259600/pexels-photo-259600.jpeg",
+  "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg",
+  "https://images.pexels.com/photos/280229/pexels-photo-280229.jpeg",
+  "https://images.pexels.com/photos/164558/pexels-photo-164558.jpeg",
+  "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg",
+  "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg",
+  "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg",
+  "https://images.pexels.com/photos/259600/pexels-photo-259600.jpeg",
+  "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg",
+  "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg",
+  "https://images.pexels.com/photos/280232/pexels-photo-280232.jpeg",
+  "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg",
+  "https://images.pexels.com/photos/1642125/pexels-photo-1642125.jpeg",
+  "https://images.pexels.com/photos/259603/pexels-photo-259603.jpeg",
+  "https://images.pexels.com/photos/534151/pexels-photo-534151.jpeg",
+  "https://images.pexels.com/photos/1834732/pexels-photo-1834732.jpeg",
+  "https://images.pexels.com/photos/259600/pexels-photo-259600.jpeg",
+  "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg",
+  "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg",
+  "https://images.pexels.com/photos/259600/pexels-photo-259600.jpeg",
+  "https://images.pexels.com/photos/280226/pexels-photo-280226.jpeg",
+  "https://images.pexels.com/photos/280233/pexels-photo-280233.jpeg",
+  "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg",
+  "https://images.pexels.com/photos/259597/pexels-photo-259597.jpeg",
+  "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg",
+  "https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg",
+  "https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg",
+  "https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg",
+  "https://images.pexels.com/photos/1834732/pexels-photo-1834732.jpeg",
+  "https://images.pexels.com/photos/1642125/pexels-photo-1642125.jpeg",
+  "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg",
+  "https://images.pexels.com/photos/280233/pexels-photo-280233.jpeg",
+  "https://images.pexels.com/photos/280232/pexels-photo-280232.jpeg",
+  "https://images.pexels.com/photos/280226/pexels-photo-280226.jpeg"
+]
+
 const statusColors = {
   Ready: "bg-green-500/20 text-green-700 border-green-200",
   "Under Construction": "bg-blue-500/20 text-blue-700 border-blue-200",
@@ -112,7 +164,7 @@ export default function ProjectsTab({ territory }: any) {
                 {/* Project Image */}
                 <div className="mb-2 aspect-video overflow-hidden rounded-md bg-muted">
                   <img
-                    src={project.image || "/placeholder.svg?height=120&width=200&query=project"}
+                    src={images[Math.floor(Math.random() * images.length)]}
                     alt={project.name}
                     width={200}
                     height={120}
@@ -121,7 +173,7 @@ export default function ProjectsTab({ territory }: any) {
                 </div>
 
                 {/* Project Info */}
-                <h3 className="mb-1 font-semibold text-sidebar-foreground line-clamp-2">{project.name}</h3>
+                <h1 className="mb-1 font-semibold text-sidebar-foreground line-clamp-2">{project.name}</h1>
                 <p className="mb-2 text-xs text-muted-foreground">{project.mid}</p>
 
                 {/* Location */}
