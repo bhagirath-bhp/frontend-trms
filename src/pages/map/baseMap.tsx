@@ -20,6 +20,11 @@ import CustomDrawer from '@/components/shared/CustomDrawer';
 import { use } from 'i18next';
 import Searchinput from './component/Searchinput';
 import GlobalLoader from '@/components/shared/GlobalLoader';
+import ViewProjects from './component/projects/ViewProjects';
+import ViewPulses from './component/pulses/ViewPulses';
+import { ViewTerritories } from './component/territories/ViewTerritories';
+
+
 
 const BaseMap = () => {
   const mapContainer = useRef<HTMLDivElement | null>(null);
@@ -31,6 +36,14 @@ const BaseMap = () => {
 
   const dispatch = useDispatch<AppDispatch>();
   const { style: mapStyle, isLayerMenuOpen: showLayerMenu, searchQuery } = useSelector((s: RootState) => s.map);
+  const [showPulses, setShowPulses] = useState(false);
+  const [showTerritories, setShowTerritories] = useState(false);
+  const [showProjects, setShowProjects] = useState(false);
+  const {
+    style: mapStyle,
+    isLayerMenuOpen: showLayerMenu,
+    searchQuery,
+  } = useSelector((s: RootState) => s.map);
 
   const mapStyles: Record<string, { name: string; url: string }> = {
     streets: { name: 'Streets', url: 'https://demotiles.maplibre.org/style.json' },
@@ -277,8 +290,10 @@ const BaseMap = () => {
   return (
     <div className="relative w-full h-screen">
       <div ref={mapContainer} className="absolute inset-0" />
-      <div className="absolute top-4 left-16  z-20 w-full max-w-xs px-4">
-        <Searchinput onSearch={handleSearch} />
+      <div className="absolute top-4 left-16 z-20  px-4 flex gap-2 ">
+       <div className='w-fit md:w-[400px]'>
+         <Searchinput onSearch={handleSearch}  />
+       </div> 
       </div>
 
       <div className='absolute top-4 left-4  w-full max-w-xs px-4 '>
@@ -316,6 +331,17 @@ const BaseMap = () => {
       </div>
 
 
+    <div className='absolute top-16 md:top-4  left-[10%] md:left-[33%] w-full max-w-xs px-4 flex gap-2 '>
+      <Button className='bg-white rounded-full hover:bg-slate-200 text-gray-800 px-2 py-2  shadow-lg border-0' onClick={() => setShowTerritories(!showTerritories)}>
+          Explore Territories
+        </Button>
+      <Button className='bg-white rounded-full hover:bg-slate-200 text-gray-800 px-2 py-2  shadow-lg border-0' onClick={() => setShowPulses(!showPulses)}>
+          Explore Pulses
+        </Button>
+         <Button className='bg-white rounded-full hover:bg-slate-200 text-gray-800 px-2 py-2  shadow-lg border-0' onClick={() => setShowProjects(!showProjects)}>
+          Explore Project
+        </Button>
+    </div>
       {/* Layer Switcher */}
       <div className="absolute bottom-4 right-4 z-50">
         <div className="relative">
@@ -407,12 +433,39 @@ const BaseMap = () => {
         onClick={handleFullscreen}
         className="absolute bottom-20 right-4 z-10 bg-white p-3 rounded-lg shadow-lg hover:bg-gray-50"
       >
+     
+      {/* Fullscreen Button */}
+      <button onClick={handleFullscreen} className="absolute bottom-20 right-4 z-10 bg-white p-3 rounded-lg shadow-lg hover:bg-gray-50 transition-colors">
         <Maximize2 size={20} className="text-gray-700" />
       </button>
 
       <CustomDrawer handleSearch={handleSearch} open={drawerOpen} onOpenChange={setDrawerOpen}>
         <div className="text-gray-600 mb-2">Click the map to load a territory polygon.</div>
       </CustomDrawer>
+
+      <CustomDrawer open={showPulses} onOpenChange={setShowPulses} handleSearch={handleSearch} direction="left">
+        <div >
+         <ViewPulses/>
+        </div>
+      </CustomDrawer>
+
+      <CustomDrawer open={showProjects} onOpenChange={setShowProjects} handleSearch={handleSearch} direction="left">
+        <div >
+         <ViewProjects/>
+        </div>
+      </CustomDrawer>
+       <CustomDrawer open={showProjects} onOpenChange={setShowProjects} handleSearch={handleSearch} direction="left">
+        <div >
+         <ViewProjects/>
+        </div>
+      </CustomDrawer>
+
+      <CustomDrawer open={showTerritories} onOpenChange={setShowTerritories} handleSearch={handleSearch} direction="left">
+        <div >
+         <ViewTerritories/>
+        </div>
+      </CustomDrawer>
+
     </div>
     </div>
   )}
