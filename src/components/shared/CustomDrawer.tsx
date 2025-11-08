@@ -45,7 +45,7 @@ const CustomDrawer: React.FC<CustomDrawerProps> = ({ open, onOpenChange, childre
                 </button>
               </div>
             </div>
-          <div className={`p-4 ${isSideDrawer ? 'h-full' : ''}  flex-1`}>
+          <div className={` ${isSideDrawer ? 'h-full' : ''}  flex-1`}>
             <div
 
             />

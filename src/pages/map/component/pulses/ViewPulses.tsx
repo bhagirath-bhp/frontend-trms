@@ -2,7 +2,7 @@ import React from 'react'
 
 type Props = {}
 
-const ViewTerritory = (props: Props) => {
+const ViewPulses = (props: Props) => {
 
      const mockPulses = [
     {
@@ -80,4 +80,4 @@ const ViewTerritory = (props: Props) => {
   )
 }
 
-export default ViewTerritory
+export default ViewPulses

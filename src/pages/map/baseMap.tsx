@@ -20,8 +20,10 @@ import { Badge } from '@/components/ui/badge';
 import CustomDrawer from '@/components/shared/CustomDrawer';
 import { use } from 'i18next';
 import Searchinput from './component/Searchinput';
-import ViewTerritory from './component/territory/ViewTerritory';
 import ViewProjects from './component/projects/ViewProjects';
+import ViewPulses from './component/pulses/ViewPulses';
+import { ViewTerritories } from './component/territories/ViewTerritories';
+
 
 
 const BaseMap = () => {
@@ -30,6 +32,7 @@ const BaseMap = () => {
   let [drawerOpen, setDrawerOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const [showPulses, setShowPulses] = useState(false);
+  const [showTerritories, setShowTerritories] = useState(false);
   const [showProjects, setShowProjects] = useState(false);
   const {
     style: mapStyle,
@@ -136,56 +139,8 @@ const BaseMap = () => {
       console.error('Error during geocoding:', error);
       alert('Failed to fetch location. Please try again.');
     }
-
-
-
   };
-  const mockPulses = [
-    {
-      id: 1,
-      title: 'Street Food Fest',
-      author: 'Ahmedabad Buzz',
-      location: 'Manek Chowk',
-      image: 'https://source.unsplash.com/random/400x300?street-food',
-      likes: 324,
-      comments: 21,
-    },
-    {
-      id: 2,
-      title: 'Local Art Exhibition',
-      author: 'Kalakar Society',
-      location: 'CG Road',
-      likes: 150,
-      comments: 8,
-    },
-    {
-      id: 3,
-      title: 'Night Cycling Ride',
-      author: 'City Riders',
-      location: 'Riverfront',
-      image: 'https://source.unsplash.com/random/400x300?cycling',
-      likes: 89,
-      comments: 5,
-    },
-    {
-      id: 3,
-      title: 'Night Cycling Ride',
-      author: 'City Riders',
-      location: 'Riverfront',
-      image: 'https://source.unsplash.com/random/400x300?cycling',
-      likes: 89,
-      comments: 5,
-    },
-    {
-      id: 3,
-      title: 'Night Cycling Ride',
-      author: 'City Riders',
-      location: 'Riverfront',
-      image: 'https://source.unsplash.com/random/400x300?cycling',
-      likes: 89,
-      comments: 5,
-    },
-  ];
+
   return (
     <div className="relative w-full h-screen">
       <div ref={mapContainer} className="absolute inset-0" />
@@ -202,8 +157,11 @@ const BaseMap = () => {
       </div>
 
     <div className='absolute top-16 md:top-4  left-[10%] md:left-[33%] w-full max-w-xs px-4 flex gap-2 '>
+      <Button className='bg-white rounded-full hover:bg-slate-200 text-gray-800 px-2 py-2  shadow-lg border-0' onClick={() => setShowTerritories(!showTerritories)}>
+          Explore Territories
+        </Button>
       <Button className='bg-white rounded-full hover:bg-slate-200 text-gray-800 px-2 py-2  shadow-lg border-0' onClick={() => setShowPulses(!showPulses)}>
-          Explore Territory
+          Explore Pulses
         </Button>
          <Button className='bg-white rounded-full hover:bg-slate-200 text-gray-800 px-2 py-2  shadow-lg border-0' onClick={() => setShowProjects(!showProjects)}>
           Explore Project
@@ -314,7 +272,7 @@ const BaseMap = () => {
 
       <CustomDrawer open={showPulses} onOpenChange={setShowPulses} handleSearch={handleSearch} direction="left">
         <div >
-         <ViewTerritory/>
+         <ViewPulses/>
         </div>
       </CustomDrawer>
 
@@ -323,7 +281,17 @@ const BaseMap = () => {
          <ViewProjects/>
         </div>
       </CustomDrawer>
+       <CustomDrawer open={showProjects} onOpenChange={setShowProjects} handleSearch={handleSearch} direction="left">
+        <div >
+         <ViewProjects/>
+        </div>
+      </CustomDrawer>
 
+      <CustomDrawer open={showTerritories} onOpenChange={setShowTerritories} handleSearch={handleSearch} direction="left">
+        <div >
+         <ViewTerritories/>
+        </div>
+      </CustomDrawer>
 
     </div>
   );
