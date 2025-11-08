@@ -20,6 +20,9 @@ import { Badge } from '@/components/ui/badge';
 import CustomDrawer from '@/components/shared/CustomDrawer';
 import { use } from 'i18next';
 import Searchinput from './component/Searchinput';
+import ViewTerritory from './component/territory/ViewTerritory';
+import ViewProjects from './component/projects/ViewProjects';
+
 
 const BaseMap = () => {
   const mapContainer = useRef<HTMLDivElement | null>(null);
@@ -27,6 +30,7 @@ const BaseMap = () => {
   let [drawerOpen, setDrawerOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const [showPulses, setShowPulses] = useState(false);
+  const [showProjects, setShowProjects] = useState(false);
   const {
     style: mapStyle,
     isLayerMenuOpen: showLayerMenu,
@@ -197,11 +201,11 @@ const BaseMap = () => {
         </Badge>
       </div>
 
-    <div className='absolute top-16 md:top-4  left-[10%] md:left-[32%] w-full max-w-xs px-4 flex gap-2 '>
+    <div className='absolute top-16 md:top-4  left-[10%] md:left-[33%] w-full max-w-xs px-4 flex gap-2 '>
       <Button className='bg-white rounded-full hover:bg-slate-200 text-gray-800 px-2 py-2  shadow-lg border-0' onClick={() => setShowPulses(!showPulses)}>
           Explore Territory
         </Button>
-         <Button className='bg-white rounded-full hover:bg-slate-200 text-gray-800 px-2 py-2  shadow-lg border-0' onClick={() => setShowPulses(!showPulses)}>
+         <Button className='bg-white rounded-full hover:bg-slate-200 text-gray-800 px-2 py-2  shadow-lg border-0' onClick={() => setShowProjects(!showProjects)}>
           Explore Project
         </Button>
     </div>
@@ -310,34 +314,14 @@ const BaseMap = () => {
 
       <CustomDrawer open={showPulses} onOpenChange={setShowPulses} handleSearch={handleSearch} direction="left">
         <div >
-          <div className="overflow-y-auto px-6 pb-6 space-y-5">
-            {mockPulses.map((pulse) => (
-              <div
-                key={pulse.id}
-                className=" shadow-md rounded-2xl  hover:shadow-xl transition-shadow duration-300"
-              >
-                {pulse.image && (
-                  <img src={pulse.image} alt={pulse.title} className="w-full h-48 object-cover" />
-                )}
-                <div className="p-4">
-                  <h3 className="text-lg font-bold text-gray-900 truncate">{pulse.title}</h3>
-                  <p className="text-sm text-gray-500 mt-1">By <span className="font-medium text-gray-600">{pulse.author}</span></p>
-                  {/* <div className="flex items-center justify-end gap-4 mt-4">
-                    <button className="flex items-center gap-1.5 text-gray-600 hover:text-red-500 transition-colors">
-                      <Heart size={18} className="text-red-500/80" /> 
-                      <span className="text-sm font-medium">{pulse.likes}</span>
-                    </button>
-                    <button className="flex items-center gap-1.5 text-gray-600 hover:text-blue-500 transition-colors">
-                      <MessageCircle size={18} className="text-blue-500/80" /> 
-                      <span className="text-sm font-medium">{pulse.comments}</span>
-                    </button>
-                  </div> */}
-                </div>
-              </div>
-            ))}
-          </div>
+         <ViewTerritory/>
         </div>
+      </CustomDrawer>
 
+      <CustomDrawer open={showProjects} onOpenChange={setShowProjects} handleSearch={handleSearch} direction="left">
+        <div >
+         <ViewProjects/>
+        </div>
       </CustomDrawer>
 
 
