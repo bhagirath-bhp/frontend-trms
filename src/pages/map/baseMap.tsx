@@ -1,10 +1,9 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { Layers, Search, Navigation, ZoomIn, ZoomOut, Maximize2, Menu, Sidebar } from 'lucide-react';
+import { Layers, Search, ZoomIn, ZoomOut, Maximize2, Sidebar } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { Latlng, Territory, getMapLocations, getTerritoryByLatLng } from '../../apis/apiService';
 import {
   setCenter,
   setZoom,
@@ -20,31 +19,53 @@ import { Badge } from '@/components/ui/badge';
 import CustomDrawer from '@/components/shared/CustomDrawer';
 import { use } from 'i18next';
 import Searchinput from './component/Searchinput';
+import GlobalLoader from '@/components/shared/GlobalLoader';
 
 const BaseMap = () => {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const map = useRef<maplibregl.Map | null>(null);
-  let [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [territory, setTerritory] = useState<Territory | null>(null);
+
+
   const dispatch = useDispatch<AppDispatch>();
-  const {
-    style: mapStyle,
-    isLayerMenuOpen: showLayerMenu,
-    searchQuery,
-  } = useSelector((s: RootState) => s.map);
+  const { style: mapStyle, isLayerMenuOpen: showLayerMenu, searchQuery } = useSelector((s: RootState) => s.map);
 
   const mapStyles: Record<string, { name: string; url: string }> = {
-    streets: {
-      name: 'Streets',
-      url: 'https://demotiles.maplibre.org/style.json'
-    },
-    satellite: {
-      name: 'Satellite',
-      url: 'https://api.maptiler.com/maps/hybrid/style.json?key=get_your_own_OpIi9ZULNHzrESv6T2vL'
-    },
-    terrain: {
-      name: 'Terrain',
-      url: 'https://api.maptiler.com/maps/outdoor/style.json?key=get_your_own_OpIi9ZULNHzrESv6T2vL'
-    }
+    streets: { name: 'Streets', url: 'https://demotiles.maplibre.org/style.json' },
+    satellite: { name: 'Satellite', url: 'https://api.maptiler.com/maps/hybrid/style.json?key=get_your_own_OpIi9ZULNHzrESv6T2vL' },
+    terrain: { name: 'Terrain', url: 'https://api.maptiler.com/maps/outdoor/style.json?key=get_your_own_OpIi9ZULNHzrESv6T2vL' }
+  };
+
+  const removeDefaultLabels = () => {
+    const m = map.current;
+    if (!m) return;
+
+    m.getStyle().layers?.forEach((layer) => {
+      if (layer.type === 'symbol' && layer.id !== 'territories-labels') {
+        m.setLayoutProperty(layer.id, 'visibility', 'none');
+      }
+    });
+  };
+
+  const loadAllTerritoryPoints = async () => {
+    const m = map.current;
+    if (!m) return;
+
+    const items = await getMapLocations();
+
+    const geojson: GeoJSON.FeatureCollection = {
+      type: 'FeatureCollection',
+      features: items.map((t) => ({
+        type: 'Feature',
+        properties: { name: t.name },
+        geometry: t.center
+      }))
+    };
+
+    const src = m.getSource('territories') as maplibregl.GeoJSONSource;
+    if (src) src.setData(geojson);
   };
 
   useEffect(() => {
@@ -53,47 +74,167 @@ const BaseMap = () => {
     map.current = new maplibregl.Map({
       container: mapContainer.current as HTMLDivElement,
       style: mapStyles[mapStyle]?.url ?? mapStyles.streets.url,
-      center: [72.5714, 23.0225], // initial center
+      center: [72.5714, 23.0225],
       zoom: 12,
-      attributionControl: false
+      attributionControl: false,
     });
 
+    map.current.on('styledata', () => {
+      removeDefaultLabels();
+      loadAllTerritoryPoints();
+    });
+
+    map.current.on('load', () => {
+      const m = map.current;
+      if (!m) return;
+
+      // territory points
+      m.addSource('territories', {
+        type: 'geojson',
+        data: { type: 'FeatureCollection', features: [] }
+      });
+
+      // badge-like label layer
+      m.addLayer({
+        id: 'territories-labels',
+        type: 'symbol',
+        source: 'territories',
+        layout: {
+          'text-field': ['get', 'name'],
+          'text-size': 15,
+          'text-justify': 'center',
+          'text-padding': 8,
+          'text-letter-spacing': 0.05,
+          'text-font': ['Noto Sans']
+        },
+        paint: {
+          'text-color': '#ffffff',
+          'text-halo-color': '#1f2937',
+          'text-halo-width': 2
+        }
+      });
+
+      // single polygon selection source
+      m.addSource('selected-territory', {
+        type: 'geojson',
+        data: { type: 'FeatureCollection', features: [] }
+      });
+
+      // fill layer
+      m.addLayer({
+        id: 'selected-territory-fill',
+        type: 'fill',
+        source: 'selected-territory',
+        paint: {
+          'fill-color': '#2563eb',
+          'fill-opacity': 0.25,
+        }
+      });
+
+      // outline layer
+      m.addLayer({
+        id: 'selected-territory-line',
+        type: 'line',
+        source: 'selected-territory',
+        paint: {
+          'line-color': '#1e40af',
+          'line-width': 3
+        }
+      });
+
+      loadAllTerritoryPoints();
+      addMapClickListener();
+    });
+
+    // controls
     map.current.addControl(new maplibregl.NavigationControl(), 'top-right');
     map.current.addControl(
-      new maplibregl.GeolocateControl({
-        positionOptions: { enableHighAccuracy: true },
-        trackUserLocation: true
-      }),
+      new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true }, trackUserLocation: true }),
       'top-right'
     );
     map.current.addControl(new maplibregl.ScaleControl(), 'bottom-left');
 
-    // sync map moves back to redux
     map.current.on('moveend', () => {
       const m = map.current!;
       const c = m.getCenter();
-      dispatch(setCenter([parseFloat(c.lng.toFixed(6)), parseFloat(c.lat.toFixed(6))]));
-      dispatch(setZoom(Number(m.getZoom().toFixed(2))));
+      dispatch(setCenter([+c.lng.toFixed(6), +c.lat.toFixed(6)]));
+      dispatch(setZoom(+m.getZoom().toFixed(2)));
     });
   }, [dispatch, mapStyle]);
 
-  // apply style changes from redux to the map instance
+  // -------------------------------------------
+  // SINGLE SELECTION
+  // -------------------------------------------
+  const addMapClickListener = () => {
+    const m = map.current;
+    if (!m) return;
+
+    m.on('click', async (e) => {
+      setLoading(true);
+
+      try {
+        const lng = e.lngLat.lng;
+        const lat = e.lngLat.lat;
+
+        const territory = await getTerritoryByLatLng(lng, lat);
+        setTerritory(territory);
+
+        if (!territory?.geometry) {
+          clearPolygon();
+          setDrawerOpen(false);
+          return;
+        }
+
+        if (territory?.geometry) {
+          plotPolygon(territory.geometry);
+        }
+      } finally {
+        setLoading(false);
+      }
+    });
+
+  };
+
+  const plotPolygon = (geometry: any) => {
+    const m = map.current;
+    if (!m || !geometry) return;
+
+    const src = m.getSource('selected-territory') as maplibregl.GeoJSONSource;
+    src.setData({
+      type: 'FeatureCollection',
+      features: [{ type: 'Feature', geometry, properties: {} }]
+    });
+
+    const bounds = new maplibregl.LngLatBounds();
+    geometry.coordinates[0].forEach(([lng, lat]) => bounds.extend([lng, lat]));
+    m.fitBounds(bounds, { padding: 40, duration: 500 });
+    setDrawerOpen(true);
+  };
+
+  const handleFullscreen = () => { const el = mapContainer.current; if (!el) return; if (!document.fullscreenElement) el.requestFullscreen?.(); else document.exitFullscreen(); };
+
+  const clearPolygon = () => {
+    const m = map.current;
+    if (!m) return;
+
+    const src = m.getSource('selected-territory') as maplibregl.GeoJSONSource;
+    if (src) {
+      src.setData({
+        type: 'FeatureCollection',
+        features: []
+      });
+    }
+  };
+
+
+  // style changes applied instantly
   useEffect(() => {
     if (!map.current) return;
-    const url = mapStyles[mapStyle]?.url;
-    if (url) map.current.setStyle(url);
+    map.current.setStyle(mapStyles[mapStyle]?.url);
   }, [mapStyle]);
 
   const handleZoomIn = () => map.current?.zoomIn();
   const handleZoomOut = () => map.current?.zoomOut();
-
-  const handleFullscreen = () => {
-    const el = mapContainer.current;
-    if (!el) return;
-    if (!document.fullscreenElement) el.requestFullscreen?.();
-    else document.exitFullscreen();
-  };
-
 
 
   const handleSearch = async (query: string) => {
@@ -141,11 +282,38 @@ const BaseMap = () => {
       </div>
 
       <div className='absolute top-4 left-4  w-full max-w-xs px-4 '>
-        <Badge className='bg-white hover:bg-slate-200 text-gray-800 px-2 py-2 rounded-lg shadow-lg border-0' onClick={() => setDrawerOpen(!drawerOpen)}>
+     
+      <GlobalLoader active={loading} />
+
+      <div ref={mapContainer} className="absolute inset-0" />
+
+      {/* Search bar */}
+      <div className="absolute top-4 left-16 z-20 w-full max-w-xs px-4">
+        <div className="relative">
+          <Input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => dispatch(setSearchQuery(e.target.value))}
+            onKeyDown={(e) => e.key === 'Enter' && handleSearch(searchQuery)}
+            placeholder="Search for places..."
+            className="w-full px-4 py-3 pl-10 rounded-lg shadow-lg border-0 focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            onClick={() => handleSearch(searchQuery)}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+          >
+            <Search size={20} />
+          </button>
+        </div>
+      </div>
+
+      {/* Drawer trigger */}
+      <div className="absolute top-4 left-4 w-full max-w-xs px-4">
+        <Badge className="bg-white hover:bg-slate-200 text-gray-800 px-2 py-2 rounded-lg shadow-lg"
+          onClick={() => setDrawerOpen(!drawerOpen)}>
           <Sidebar />
         </Badge>
       </div>
-
 
 
       {/* Layer Switcher */}
@@ -225,34 +393,29 @@ const BaseMap = () => {
           )}
         </div>
       </div>
-
-      {/* Zoom Controls */}
       <div className="absolute bottom-32 right-4 z-10 flex flex-col gap-2">
-        <button onClick={handleZoomIn} className="bg-white p-3 rounded-lg shadow-lg hover:bg-gray-50 transition-colors">
+        <button onClick={handleZoomIn} className="bg-white p-3 rounded-lg shadow-lg hover:bg-gray-50">
           <ZoomIn size={20} className="text-gray-700" />
         </button>
-        <button onClick={handleZoomOut} className="bg-white p-3 rounded-lg shadow-lg hover:bg-gray-50 transition-colors">
+        <button onClick={handleZoomOut} className="bg-white p-3 rounded-lg shadow-lg hover:bg-gray-50">
           <ZoomOut size={20} className="text-gray-700" />
         </button>
       </div>
 
-      {/* Fullscreen Button */}
-      <button onClick={handleFullscreen} className="absolute bottom-20 right-4 z-10 bg-white p-3 rounded-lg shadow-lg hover:bg-gray-50 transition-colors">
+      {/* Fullscreen */}
+      <button
+        onClick={handleFullscreen}
+        className="absolute bottom-20 right-4 z-10 bg-white p-3 rounded-lg shadow-lg hover:bg-gray-50"
+      >
         <Maximize2 size={20} className="text-gray-700" />
       </button>
 
-
-      <CustomDrawer open={drawerOpen} onOpenChange={setDrawerOpen} handleSearch={handleSearch} direction="left">
-        <div>
-          <p className="text-gray-600 mb-2">
-            This drawer opens when you click on the map. You can use this space to display additional information
-            about the clicked location.
-          </p>
-        </div>
+      <CustomDrawer handleSearch={handleSearch} open={drawerOpen} onOpenChange={setDrawerOpen}>
+        <div className="text-gray-600 mb-2">Click the map to load a territory polygon.</div>
       </CustomDrawer>
     </div>
-  );
-};
-
+    </div>
+  )}
 
 export default BaseMap;
+
