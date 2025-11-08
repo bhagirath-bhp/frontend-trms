@@ -3,15 +3,18 @@
 import { X } from 'lucide-react';
 import React from 'react';
 import { Drawer } from 'vaul';
+import SearchInput from '../CustomInput/SearchInput';
+import Searchinput from '@/pages/map/component/Searchinput';
 
 interface CustomDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   children: React.ReactNode; // Component to render inside the drawer
   direction?: 'left' | 'right' | 'bottom'; // Direction of the drawer
+  handleSearch: (query: string) => void; // Callback to handle search
 }
 
-const CustomDrawer: React.FC<CustomDrawerProps> = ({ open, onOpenChange, children, direction = 'left' }) => {
+const CustomDrawer: React.FC<CustomDrawerProps> = ({ open, onOpenChange, children, direction = 'left', handleSearch }) => {
   const isSideDrawer = direction === 'left' || direction === 'right';
 
   return (
@@ -26,7 +29,10 @@ const CustomDrawer: React.FC<CustomDrawerProps> = ({ open, onOpenChange, childre
           } ${direction === 'bottom' ? 'bottom-0 left-0 right-0' : ''} outline-none`}
         >
           <div className="p-4 bg-gray-100 border-t border-gray-200 mt-auto">
-              <div className="flex gap-6 justify-end max-w-md mx-auto">
+              <div className="flex gap-6  mx-auto">
+               <div className='w-[90%]'>
+                <Searchinput onSearch={handleSearch}/>
+               </div>
                 <button
                   className="text-sm text-blue-600 hover:underline"
                   onClick={() => onOpenChange(false)}

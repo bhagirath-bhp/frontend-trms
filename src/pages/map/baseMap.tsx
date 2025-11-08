@@ -19,6 +19,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import CustomDrawer from '@/components/shared/CustomDrawer';
 import { use } from 'i18next';
+import Searchinput from './component/Searchinput';
 
 const BaseMap = () => {
   const mapContainer = useRef<HTMLDivElement | null>(null);
@@ -93,48 +94,59 @@ const BaseMap = () => {
     else document.exitFullscreen();
   };
 
-  const handleSearch = () => {
-    if (searchQuery.trim()) {
-      alert(`Search functionality would query: "${searchQuery}"`);
-    }
-  };
 
-  const handleSearchKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') handleSearch();
+
+  const handleSearch = async (query: string) => {
+    if (!query.trim()) return;
+
+    try {
+      // Example: Using OpenCage Geocoder (replace with your geocoding service)
+      const response = await fetch(
+        `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(
+          query
+        )}&key=YOUR_API_KEY`
+      );
+      const data = await response.json();
+
+      if (data.results && data.results.length > 0) {
+        const { lat, lng } = data.results[0].geometry;
+
+        // Pan the map to the searched location
+        map.current?.flyTo({ center: [lng, lat], zoom: 14 });
+
+        // Update Redux state
+        dispatch(setCenter([lng, lat]));
+      } else {
+        map.current?.flyTo({
+          center: [72.6049247, 23.013302], // Target coordinates
+          zoom: 14, // Target zoom level
+          speed: 0.8, // Animation speed (default is 1.2, lower is slower)
+          curve: 1.5, // Path curvature (default is 1.42, higher is more curved)
+          easing: (t) => t, // Easing function (default is linear)
+          essential: true, // If true, animation is considered essential for accessibility
+        });
+        // alert('Location not found. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error during geocoding:', error);
+      alert('Failed to fetch location. Please try again.');
+    }
   };
 
   return (
     <div className="relative w-full h-screen">
-      
       <div ref={mapContainer} className="absolute inset-0" />
-
-      
       <div className="absolute top-4 left-16  z-20 w-full max-w-xs px-4">
-        <div className="relative">
-          <Input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => dispatch(setSearchQuery(e.target.value))}
-            onKeyPress={handleSearchKeyPress}
-            placeholder="Search for places..."
-            className="w-full px-4 py-3 pl-10 pr-4 rounded-lg shadow-lg border-0 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            onClick={handleSearch}
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-          >
-            <Search size={20} />
-          </button>
-        </div>
+        <Searchinput onSearch={handleSearch} />
       </div>
 
       <div className='absolute top-4 left-4  w-full max-w-xs px-4 '>
-        <Badge className='bg-white hover:bg-slate-200 text-gray-800 px-2 py-2 rounded-lg shadow-lg border-0' onClick={()=>setDrawerOpen(!drawerOpen)}>
-         <Sidebar/>
+        <Badge className='bg-white hover:bg-slate-200 text-gray-800 px-2 py-2 rounded-lg shadow-lg border-0' onClick={() => setDrawerOpen(!drawerOpen)}>
+          <Sidebar />
         </Badge>
       </div>
 
-     
+
 
       {/* Layer Switcher */}
       <div className="absolute bottom-4 right-4 z-50">
@@ -175,8 +187,8 @@ const BaseMap = () => {
                     key === 'streets'
                       ? { background: 'linear-gradient(135deg,#f8fafc,#dbeafe)' }
                       : key === 'satellite'
-                      ? { background: 'linear-gradient(135deg,#e6f4ff,#d1fae5)' }
-                      : { background: 'linear-gradient(135deg,#fff7ed,#fef3c7)' };
+                        ? { background: 'linear-gradient(135deg,#e6f4ff,#d1fae5)' }
+                        : { background: 'linear-gradient(135deg,#fff7ed,#fef3c7)' };
 
                   return (
                     <button
@@ -186,9 +198,8 @@ const BaseMap = () => {
                         dispatch(setLayerMenu(false));
                       }}
                       role="menuitem"
-                      className={`flex items-center gap-3 p-2 rounded-md transition-colors w-full text-left ${
-                        mapStyle === key ? 'ring-1 ring-blue-300 bg-blue-50' : 'hover:bg-gray-50'
-                      }`}
+                      className={`flex items-center gap-3 p-2 rounded-md transition-colors w-full text-left ${mapStyle === key ? 'ring-1 ring-blue-300 bg-blue-50' : 'hover:bg-gray-50'
+                        }`}
                     >
                       <div className="w-16 h-10 rounded-md overflow-hidden flex-shrink-0 border" style={thumbStyle} aria-hidden />
                       <div className="flex-1">
@@ -231,7 +242,7 @@ const BaseMap = () => {
       </button>
 
 
-      <CustomDrawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+      <CustomDrawer open={drawerOpen} onOpenChange={setDrawerOpen} handleSearch={handleSearch} direction="left">
         <div>
           <p className="text-gray-600 mb-2">
             This drawer opens when you click on the map. You can use this space to display additional information
