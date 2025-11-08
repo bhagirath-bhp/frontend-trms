@@ -21,7 +21,7 @@ const tabs = [
 ]
 
 export function ViewTerritories({territory}:any) {
-  console.log("territory in view territories:", territory)
+  
   const [activeTab, setActiveTab] = useState("overview")
 
   const renderContent = () => {

@@ -3,6 +3,7 @@
 import { Badge } from "@/components/ui/badge"
 import { Home, DollarSign, Download, MapPin, Search } from "lucide-react"
 import { useState } from "react"
+import ProjectCard from "./project-viewTab"
 
 const projectsData = [
   {
@@ -65,7 +66,10 @@ export default function ProjectsTab({ territory }: any) {
   })
   return (
     <div className="space-y-3">
-      <div className="border-b border-border p-4">
+      {selectedProject ?
+                     <ProjectCard project={selectedProject} setSelectedProject={setSelectedProject} />
+                     : (<div>
+        <div className="border-b border-border p-4">
         {/* Search */}
         <div className="relative mb-3">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -79,7 +83,7 @@ export default function ProjectsTab({ territory }: any) {
         </div>
         {/* Status Filter */}
         <div className="flex gap-2">
-          {["all", "New", "Active", "Inactive","Ongoing"].map((status) => (
+          {["all", "New", "Active", "Inactive", "Ongoing"].map((status) => (
             <button
               key={status}
               onClick={() => setSelectedStatus(status)}
@@ -92,7 +96,7 @@ export default function ProjectsTab({ territory }: any) {
             </button>
           ))}
         </div>
-        
+
       </div>
 
       <div className="flex-1 overflow-y-auto">
@@ -146,9 +150,11 @@ export default function ProjectsTab({ territory }: any) {
           </div>
         )}
       </div>
- <div className="border-t border-border bg-sidebar p-3 text-center text-xs text-muted-foreground">
-                        {filteredProjects.length} of {projects.length} projects
-                    </div>
+      <div className="border-t border-border bg-sidebar p-3 text-center text-xs text-muted-foreground">
+        {filteredProjects.length} of {projects.length} projects
+      </div>
+      </div>)}
+      
     </div>
   )
 }
