@@ -105,10 +105,10 @@ const BaseMap = () => {
 
   return (
     <div className="relative w-full h-screen">
-      {/* Map Container */}
+      
       <div ref={mapContainer} className="absolute inset-0" />
 
-      {/* Search Bar */}
+      
       <div className="absolute top-4 left-16  w-full max-w-xs px-4">
         <div className="relative">
           <Input
