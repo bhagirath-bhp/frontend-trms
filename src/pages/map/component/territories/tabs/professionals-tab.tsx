@@ -3,22 +3,23 @@
 import { MessageCircle, Phone, CheckCircle2, Search } from "lucide-react"
 import { useState } from "react"
 
-const professionalsData = [
-  { id: 1, name: "Amit Kumar", role: "Broker", verified: true, phone: "+91-9876543210", rating: 4.8 },
-  { id: 2, name: "Priya Sharma", role: "Developer", verified: true, phone: "+91-9876543211", rating: 4.9 },
-  { id: 3, name: "Rajesh Patel", role: "Architect", verified: false, phone: "+91-9876543212", rating: 4.5 },
-  { id: 4, name: "Neha Singh", role: "Channel Partner", verified: true, phone: "+91-9876543213", rating: 4.7 },
-  { id: 5, name: "Vikram Verma", role: "Lawyer", verified: true, phone: "+91-9876543214", rating: 4.6 },
-]
+// const professionalsData = [
+//   { id: 1, name: "Amit Kumar", role: "Broker", verified: true, phone: "+91-9876543210", rating: 4.8 },
+//   { id: 2, name: "Priya Sharma", role: "Developer", verified: true, phone: "+91-9876543211", rating: 4.9 },
+//   { id: 3, name: "Rajesh Patel", role: "Architect", verified: false, phone: "+91-9876543212", rating: 4.5 },
+//   { id: 4, name: "Neha Singh", role: "Channel Partner", verified: true, phone: "+91-9876543213", rating: 4.7 },
+//   { id: 5, name: "Vikram Verma", role: "Lawyer", verified: true, phone: "+91-9876543214", rating: 4.6 },
+// ]
 
 const roles = ["All", "Channel Partners", "Developers", "Brokers", "Architects", "Lawyers"]
 
-export default function ProfessionalsTab() {
+export default function ProfessionalsTab({ territory }: any) {
   const [selectedRole, setSelectedRole] = useState("All")
   const [searchTerm, setSearchTerm] = useState("")
+  const professionalsData = territory.people || []
 
   const filtered = professionalsData.filter((p) => {
-    const roleMatch = selectedRole === "All" || p.role === selectedRole
+    const roleMatch = selectedRole === "All" || p.type === selectedRole
     const searchMatch = p.name.toLowerCase().includes(searchTerm.toLowerCase())
     return roleMatch && searchMatch
   })
@@ -67,7 +68,7 @@ export default function ProfessionalsTab() {
                   <h4 className="font-semibold text-sm text-foreground">{prof.name}</h4>
                   {prof.verified && <CheckCircle2 size={14} className="text-accent flex-shrink-0" />}
                 </div>
-                <p className="text-xs text-muted-foreground">{prof.role}</p>
+                <p className="text-xs text-muted-foreground">{prof.designation}</p>
               </div>
               <span className="text-xs font-semibold text-foreground bg-accent/20 px-2 py-1 rounded">
                 ★ {prof.rating}

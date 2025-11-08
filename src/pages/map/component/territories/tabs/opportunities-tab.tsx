@@ -40,7 +40,7 @@ export default function OpportunitiesTab() {
           className="bg-secondary rounded-lg p-3 border border-border hover:border-primary/50 transition-all"
         >
           <div className="flex items-start gap-2 mb-2">
-            <MapPin size={16} className="text-accent mt-0.5 flex-shrink-0" />
+            <MapPin size={16} />
             <div className="flex-1">
               <h4 className="font-semibold text-sm text-foreground">{opp.title}</h4>
               <span

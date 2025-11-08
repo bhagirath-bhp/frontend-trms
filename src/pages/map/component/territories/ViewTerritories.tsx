@@ -8,28 +8,30 @@ import TrendingsTab from "./tabs/trendings-tab"
 import GovernanceTab from "./tabs/governance-tab"
 import EventsTab from "./tabs/events-tab"
 import { Building2, Users, Home, Lightbulb, TrendingUp, Shield, Calendar } from "lucide-react"
+import { Territory } from "@/apis/apiService"
 
 const tabs = [
   { id: "overview", label: "Overview", icon: Building2 },
+   { id: "projects", label: "Projects", icon: Home },
   { id: "professionals", label: "Professionals", icon: Users },
-  { id: "projects", label: "Projects", icon: Home },
   { id: "opportunities", label: "Opportunities", icon: Lightbulb },
   { id: "trendings", label: "Trendings", icon: TrendingUp },
   { id: "governance", label: "Governance", icon: Shield },
   { id: "events", label: "Events", icon: Calendar },
 ]
 
-export function ViewTerritories() {
+export function ViewTerritories({territory}:any) {
+  console.log("territory in view territories:", territory)
   const [activeTab, setActiveTab] = useState("overview")
 
   const renderContent = () => {
     switch (activeTab) {
       case "overview":
-        return <OverviewTab />
+        return <OverviewTab territory={territory} />
       case "professionals":
-        return <ProfessionalsTab />
+        return <ProfessionalsTab territory={territory} />
       case "projects":
-        return <ProjectsTab />
+        return <ProjectsTab territory={territory} />
       case "opportunities":
         return <OpportunitiesTab />
       case "trendings":

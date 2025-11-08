@@ -285,55 +285,28 @@ const BaseMap = () => {
     <div className="relative w-full h-screen">
       <div ref={mapContainer} className="absolute inset-0" />
       <div className="absolute top-4 left-16 z-20  px-4 flex gap-2 ">
-       <div className='w-fit md:w-[400px]'>
-         <Searchinput onSearch={handleSearch}  />
-       </div> 
-      </div>
-
-      <div className='absolute top-4 left-4  w-full max-w-xs px-4 '>
-     
-      <GlobalLoader active={loading} />
-
-      {/* Search bar */}
-      <div className="absolute top-4 left-16 z-20 w-full max-w-xs px-4">
-        <div className="relative">
-          <Input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => dispatch(setSearchQuery(e.target.value))}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch(searchQuery)}
-            placeholder="Search for places..."
-            className="w-full px-4 py-3 pl-10 rounded-lg shadow-lg border-0 focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            onClick={() => handleSearch(searchQuery)}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-          >
-            <Search size={20} />
-          </button>
+        <div className='w-fit md:w-[400px]'>
+          <Searchinput onSearch={handleSearch} /><GlobalLoader active={loading} />
         </div>
       </div>
 
-      {/* Drawer trigger */}
-      <div className="absolute top-4 left-4 w-full max-w-xs px-4">
-        <Badge className="bg-white hover:bg-slate-200 text-gray-800 px-2 py-2 rounded-lg shadow-lg"
-          onClick={() => setDrawerOpen(!drawerOpen)}>
+      <div className='absolute top-4 left-4  w-full max-w-xs px-4 '>
+        <Badge className='bg-white hover:bg-slate-200 text-gray-800 px-2 py-2 rounded-lg shadow-lg border-0' onClick={() => setDrawerOpen(!drawerOpen)}>
           <Sidebar />
         </Badge>
       </div>
 
-
-    <div className='absolute top-16 md:top-4  left-[10%] md:left-[33%] w-full max-w-xs px-4 flex gap-2 '>
-      <Button className='bg-white rounded-full hover:bg-slate-200 text-gray-800 px-2 py-2  shadow-lg border-0' onClick={() => setShowTerritories(!showTerritories)}>
+      <div className='absolute top-16 md:top-4  left-[10%] md:left-[33%] w-full max-w-xs px-4 flex gap-2 '>
+        {/* <Button className='bg-white rounded-full hover:bg-slate-200 text-gray-800 px-2 py-2  shadow-lg border-0' onClick={() => setShowTerritories(!showTerritories)}>
           Explore Territories
-        </Button>
-      <Button className='bg-white rounded-full hover:bg-slate-200 text-gray-800 px-2 py-2  shadow-lg border-0' onClick={() => setShowPulses(!showPulses)}>
+        </Button> */}
+        <Button className='bg-white rounded-full hover:bg-slate-200 text-gray-800 px-2 py-2  shadow-lg border-0' onClick={() => setShowPulses(!showPulses)}>
           Explore Pulses
         </Button>
-         <Button className='bg-white rounded-full hover:bg-slate-200 text-gray-800 px-2 py-2  shadow-lg border-0' onClick={() => setShowProjects(!showProjects)}>
+        <Button className='bg-white rounded-full hover:bg-slate-200 text-gray-800 px-2 py-2  shadow-lg border-0' onClick={() => setShowProjects(!showProjects)}>
           Explore Project
         </Button>
-    </div>
+      </div>
       {/* Layer Switcher */}
       <div className="absolute bottom-4 right-4 z-50">
         <div className="relative">
@@ -411,54 +384,56 @@ const BaseMap = () => {
           )}
         </div>
       </div>
+
+      {/* Zoom Controls */}
       <div className="absolute bottom-32 right-4 z-10 flex flex-col gap-2">
-        <button onClick={handleZoomIn} className="bg-white p-3 rounded-lg shadow-lg hover:bg-gray-50">
+        <button onClick={handleZoomIn} className="bg-white p-3 rounded-lg shadow-lg hover:bg-gray-50 transition-colors">
           <ZoomIn size={20} className="text-gray-700" />
         </button>
-        <button onClick={handleZoomOut} className="bg-white p-3 rounded-lg shadow-lg hover:bg-gray-50">
+        <button onClick={handleZoomOut} className="bg-white p-3 rounded-lg shadow-lg hover:bg-gray-50 transition-colors">
           <ZoomOut size={20} className="text-gray-700" />
         </button>
       </div>
 
-      {/* Fullscreen */}
-      <button
-        onClick={handleFullscreen}
-        className="absolute bottom-20 right-4 z-10 bg-white p-3 rounded-lg shadow-lg hover:bg-gray-50"
-      > 
-        <Maximize2 size={20} className="text-gray-700" />
-      </button>
-     
-     
       {/* Fullscreen Button */}
       <button onClick={handleFullscreen} className="absolute bottom-20 right-4 z-10 bg-white p-3 rounded-lg shadow-lg hover:bg-gray-50 transition-colors">
         <Maximize2 size={20} className="text-gray-700" />
       </button>
 
-      <CustomDrawer handleSearch={handleSearch} open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <div className="text-gray-600 mb-2">Click the map to load a territory polygon.</div>
+
+      <CustomDrawer open={drawerOpen} onOpenChange={setDrawerOpen} handleSearch={handleSearch} direction="left">
+        <div>
+          <ViewTerritories territory={territory} />
+        </div>
       </CustomDrawer>
 
       <CustomDrawer open={showPulses} onOpenChange={setShowPulses} handleSearch={handleSearch} direction="left">
         <div >
-         <ViewPulses/>
+          <ViewPulses />
         </div>
       </CustomDrawer>
 
       <CustomDrawer open={showProjects} onOpenChange={setShowProjects} handleSearch={handleSearch} direction="left">
         <div >
-         <ViewProjects/>
+          <ViewProjects />
+        </div>
+      </CustomDrawer>
+      <CustomDrawer open={showProjects} onOpenChange={setShowProjects} handleSearch={handleSearch} direction="left">
+        <div >
+          <ViewProjects />
         </div>
       </CustomDrawer>
 
-      <CustomDrawer open={showTerritories} onOpenChange={setShowTerritories} handleSearch={handleSearch} direction="left">
+      {/* <CustomDrawer open={showTerritories} onOpenChange={setShowTerritories} handleSearch={handleSearch} direction="left">
         <div >
          <ViewTerritories/>
         </div>
-      </CustomDrawer>
+      </CustomDrawer> */}
 
     </div>
-    </div>
-  )}
+
+  )
+}
 
 export default BaseMap;
 

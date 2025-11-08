@@ -2,7 +2,7 @@
 
 import { MapPin, Users, TrendingUp, Zap } from "lucide-react"
 
-export default function OverviewTab() {
+export default function OverviewTab({territory}:any) {
   const stats = [
     { label: "Active Projects", value: "24", icon: TrendingUp, color: "from-blue-500 to-blue-600" },
     { label: "Professionals", value: "156", icon: Users, color: "from-green-500 to-green-600" },
@@ -14,13 +14,15 @@ export default function OverviewTab() {
     <div className="space-y-4">
       <div className="bg-gradient-to-br from-accent/10 to-primary/10 rounded-lg p-4 border border-accent/20">
         <div className="flex items-start gap-3">
-          <MapPin className="text-accent mt-1 flex-shrink-0" size={20} />
+             <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-accent to-primary flex items-center justify-center text-white shadow">
+        <MapPin size={20} />
+          </div>
           <div>
-            <h3 className="font-semibold text-foreground">South Delhi</h3>
-            <p className="text-xs text-muted-foreground mt-1">Pin Code: 110016</p>
-            <p className="text-xs text-muted-foreground">Coordinates: 28.5244°N, 77.1855°E</p>
-            <p className="text-xs text-muted-foreground mt-2">Population: 245,000</p>
-            <p className="text-xs text-muted-foreground">Area: 12.5 Sq Km</p>
+            <h3 className="font-semibold text-foreground">{territory?.name}</h3>
+            <p className="text-xs text-muted-foreground mt-1">Pin Code: {territory?.pinCode}</p>
+            <p className="text-xs text-muted-foreground">Coordinates: {territory?.coordinates}</p>
+            <p className="text-xs text-muted-foreground mt-2">Population: {territory?.population}</p>
+            <p className="text-xs text-muted-foreground">Area: {territory?.area}</p>
           </div>
         </div>
       </div>
