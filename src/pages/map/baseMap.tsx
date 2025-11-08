@@ -109,7 +109,7 @@ const BaseMap = () => {
       <div ref={mapContainer} className="absolute inset-0" />
 
       
-      <div className="absolute top-4 left-16  w-full max-w-xs px-4">
+      <div className="absolute top-4 left-16  z-20 w-full max-w-xs px-4">
         <div className="relative">
           <Input
             type="text"
