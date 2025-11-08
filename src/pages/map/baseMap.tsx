@@ -17,7 +17,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import CustomDrawer from '@/components/shared/CustomDrawer';
-import { use } from 'i18next';
 import Searchinput from './component/Searchinput';
 import GlobalLoader from '@/components/shared/GlobalLoader';
 import ViewProjects from './component/projects/ViewProjects';
@@ -39,11 +38,6 @@ const BaseMap = () => {
   const [showPulses, setShowPulses] = useState(false);
   const [showTerritories, setShowTerritories] = useState(false);
   const [showProjects, setShowProjects] = useState(false);
-  const {
-    style: mapStyle,
-    isLayerMenuOpen: showLayerMenu,
-    searchQuery,
-  } = useSelector((s: RootState) => s.map);
 
   const mapStyles: Record<string, { name: string; url: string }> = {
     streets: { name: 'Streets', url: 'https://demotiles.maplibre.org/style.json' },
@@ -300,8 +294,6 @@ const BaseMap = () => {
      
       <GlobalLoader active={loading} />
 
-      <div ref={mapContainer} className="absolute inset-0" />
-
       {/* Search bar */}
       <div className="absolute top-4 left-16 z-20 w-full max-w-xs px-4">
         <div className="relative">
@@ -432,7 +424,10 @@ const BaseMap = () => {
       <button
         onClick={handleFullscreen}
         className="absolute bottom-20 right-4 z-10 bg-white p-3 rounded-lg shadow-lg hover:bg-gray-50"
-      >
+      > 
+        <Maximize2 size={20} className="text-gray-700" />
+      </button>
+     
      
       {/* Fullscreen Button */}
       <button onClick={handleFullscreen} className="absolute bottom-20 right-4 z-10 bg-white p-3 rounded-lg shadow-lg hover:bg-gray-50 transition-colors">
@@ -450,11 +445,6 @@ const BaseMap = () => {
       </CustomDrawer>
 
       <CustomDrawer open={showProjects} onOpenChange={setShowProjects} handleSearch={handleSearch} direction="left">
-        <div >
-         <ViewProjects/>
-        </div>
-      </CustomDrawer>
-       <CustomDrawer open={showProjects} onOpenChange={setShowProjects} handleSearch={handleSearch} direction="left">
         <div >
          <ViewProjects/>
         </div>
