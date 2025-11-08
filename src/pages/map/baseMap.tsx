@@ -26,6 +26,7 @@ const BaseMap = () => {
   const map = useRef<maplibregl.Map | null>(null);
   let [drawerOpen, setDrawerOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
+  const [showPulses, setShowPulses] = useState(false);
   const {
     style: mapStyle,
     isLayerMenuOpen: showLayerMenu,
@@ -131,13 +132,66 @@ const BaseMap = () => {
       console.error('Error during geocoding:', error);
       alert('Failed to fetch location. Please try again.');
     }
-  };
 
+
+
+  };
+  const mockPulses = [
+    {
+      id: 1,
+      title: 'Street Food Fest',
+      author: 'Ahmedabad Buzz',
+      location: 'Manek Chowk',
+      image: 'https://source.unsplash.com/random/400x300?street-food',
+      likes: 324,
+      comments: 21,
+    },
+    {
+      id: 2,
+      title: 'Local Art Exhibition',
+      author: 'Kalakar Society',
+      location: 'CG Road',
+      likes: 150,
+      comments: 8,
+    },
+    {
+      id: 3,
+      title: 'Night Cycling Ride',
+      author: 'City Riders',
+      location: 'Riverfront',
+      image: 'https://source.unsplash.com/random/400x300?cycling',
+      likes: 89,
+      comments: 5,
+    },
+    {
+      id: 3,
+      title: 'Night Cycling Ride',
+      author: 'City Riders',
+      location: 'Riverfront',
+      image: 'https://source.unsplash.com/random/400x300?cycling',
+      likes: 89,
+      comments: 5,
+    },
+    {
+      id: 3,
+      title: 'Night Cycling Ride',
+      author: 'City Riders',
+      location: 'Riverfront',
+      image: 'https://source.unsplash.com/random/400x300?cycling',
+      likes: 89,
+      comments: 5,
+    },
+  ];
   return (
     <div className="relative w-full h-screen">
       <div ref={mapContainer} className="absolute inset-0" />
-      <div className="absolute top-4 left-16  z-20 w-full max-w-xs px-4">
-        <Searchinput onSearch={handleSearch} />
+      <div className="absolute top-4 left-16 z-20 w-full max-w-xs px-4 flex gap-2 ">
+       <div className=''>
+         <Searchinput onSearch={handleSearch}  />
+       </div>
+        <Button className='bg-white rounded-full hover:bg-slate-200 text-gray-800 px-2 py-2  shadow-lg border-0' onClick={() => setShowPulses(!showPulses)}>
+          Explore Territory
+        </Button>
       </div>
 
       <div className='absolute top-4 left-4  w-full max-w-xs px-4 '>
@@ -145,7 +199,6 @@ const BaseMap = () => {
           <Sidebar />
         </Badge>
       </div>
-
 
 
       {/* Layer Switcher */}
@@ -250,6 +303,40 @@ const BaseMap = () => {
           </p>
         </div>
       </CustomDrawer>
+
+      <CustomDrawer open={showPulses} onOpenChange={setShowPulses} handleSearch={handleSearch} direction="left">
+        <div >
+          <div className="overflow-y-auto px-6 pb-6 space-y-5">
+            {mockPulses.map((pulse) => (
+              <div
+                key={pulse.id}
+                className=" shadow-md rounded-2xl  hover:shadow-xl transition-shadow duration-300"
+              >
+                {pulse.image && (
+                  <img src={pulse.image} alt={pulse.title} className="w-full h-48 object-cover" />
+                )}
+                <div className="p-4">
+                  <h3 className="text-lg font-bold text-gray-900 truncate">{pulse.title}</h3>
+                  <p className="text-sm text-gray-500 mt-1">By <span className="font-medium text-gray-600">{pulse.author}</span></p>
+                  {/* <div className="flex items-center justify-end gap-4 mt-4">
+                    <button className="flex items-center gap-1.5 text-gray-600 hover:text-red-500 transition-colors">
+                      <Heart size={18} className="text-red-500/80" /> 
+                      <span className="text-sm font-medium">{pulse.likes}</span>
+                    </button>
+                    <button className="flex items-center gap-1.5 text-gray-600 hover:text-blue-500 transition-colors">
+                      <MessageCircle size={18} className="text-blue-500/80" /> 
+                      <span className="text-sm font-medium">{pulse.comments}</span>
+                    </button>
+                  </div> */}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </CustomDrawer>
+
+
     </div>
   );
 };

@@ -26,7 +26,7 @@ const CustomDrawer: React.FC<CustomDrawerProps> = ({ open, onOpenChange, childre
       <Drawer.Portal>
        
         <Drawer.Content
-          className={`bg-gray-100 flex flex-col z-40  ${
+          className={`bg-gray-100 flex flex-col z-40 overflow-y-auto ${
             isSideDrawer && !isMobile ? 'h-full w-[450px]' : 'h-full w-full'
           } fixed ${direction === 'left' ? 'left-0 top-0' : ''} ${
             direction === 'right' ? 'right-0 top-0' : ''
@@ -45,24 +45,12 @@ const CustomDrawer: React.FC<CustomDrawerProps> = ({ open, onOpenChange, childre
                 </button>
               </div>
             </div>
-          <div className={`p-4 ${isSideDrawer ? 'h-full' : ''} bg-white flex-1`}>
+          <div className={`p-4 ${isSideDrawer ? 'h-full' : ''}  flex-1`}>
             <div
 
             />
             <div className="max-w-md mx-auto">{children}</div>
-          </div>
-          
-            <div className="p-4 bg-gray-100 border-t border-gray-200 mt-auto">
-              <div className="flex gap-6 justify-end max-w-md mx-auto">
-                <button
-                  className="text-sm text-blue-600 hover:underline"
-                  onClick={() => onOpenChange(false)}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          
+          </div>  
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>
