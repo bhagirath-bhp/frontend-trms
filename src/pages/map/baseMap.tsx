@@ -185,13 +185,10 @@ const BaseMap = () => {
   return (
     <div className="relative w-full h-screen">
       <div ref={mapContainer} className="absolute inset-0" />
-      <div className="absolute top-4 left-16 z-20 w-full max-w-xs px-4 flex gap-2 ">
-       <div className=''>
+      <div className="absolute top-4 left-16 z-20  px-4 flex gap-2 ">
+       <div className='w-fit md:w-[400px]'>
          <Searchinput onSearch={handleSearch}  />
-       </div>
-        <Button className='bg-white rounded-full hover:bg-slate-200 text-gray-800 px-2 py-2  shadow-lg border-0' onClick={() => setShowPulses(!showPulses)}>
-          Explore Territory
-        </Button>
+       </div> 
       </div>
 
       <div className='absolute top-4 left-4  w-full max-w-xs px-4 '>
@@ -200,7 +197,14 @@ const BaseMap = () => {
         </Badge>
       </div>
 
-
+    <div className='absolute top-16 md:top-4  left-[10%] md:left-[32%] w-full max-w-xs px-4 flex gap-2 '>
+      <Button className='bg-white rounded-full hover:bg-slate-200 text-gray-800 px-2 py-2  shadow-lg border-0' onClick={() => setShowPulses(!showPulses)}>
+          Explore Territory
+        </Button>
+         <Button className='bg-white rounded-full hover:bg-slate-200 text-gray-800 px-2 py-2  shadow-lg border-0' onClick={() => setShowPulses(!showPulses)}>
+          Explore Project
+        </Button>
+    </div>
       {/* Layer Switcher */}
       <div className="absolute bottom-4 right-4 z-50">
         <div className="relative">
@@ -288,7 +292,7 @@ const BaseMap = () => {
           <ZoomOut size={20} className="text-gray-700" />
         </button>
       </div>
-
+     
       {/* Fullscreen Button */}
       <button onClick={handleFullscreen} className="absolute bottom-20 right-4 z-10 bg-white p-3 rounded-lg shadow-lg hover:bg-gray-50 transition-colors">
         <Maximize2 size={20} className="text-gray-700" />
