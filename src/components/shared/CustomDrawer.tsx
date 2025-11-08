@@ -14,7 +14,7 @@ const CustomDrawer: React.FC<CustomDrawerProps> = ({ open, onOpenChange, childre
   const isSideDrawer = direction === 'left' || direction === 'right';
 
   return (
-    <Drawer.Root open={open} direction={direction} >
+    <Drawer.Root open={open} direction={direction} onOpenChange={onOpenChange}>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-black/40" />
         <Drawer.Content
@@ -26,10 +26,8 @@ const CustomDrawer: React.FC<CustomDrawerProps> = ({ open, onOpenChange, childre
         >
           <div className={`p-4 ${isSideDrawer ? 'h-full' : ''} bg-white flex-1`}>
             <div
-              aria-hidden
-              className={`mx-auto ${
-                isSideDrawer ? 'w-1.5 h-12' : 'w-12 h-1.5'
-              } flex-shrink-0 rounded-full bg-gray-300 mb-8`}
+             
+              
             />
             <div className="max-w-md mx-auto">{children}</div>
           </div>
