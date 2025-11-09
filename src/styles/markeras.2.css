@@ -1,0 +1,46 @@
+/* 3. Custom CSS for our HTML markers */
+/* We prevent the default maplibre cursors/events on our custom element */
+.maplibregl-marker {
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+.maplibregl-marker:hover {
+    transform: scale(1.1);
+}
+
+/* ----- Marker 1: A "Pin" (anchored at the bottom) ----- */
+/* This simulates a classic map pin */
+.custom-marker-pin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* We use a transform to make sure the "bottom" anchor
+        points to the right place even with the pseudo-element */
+    transform-origin: 50% 100%;
+}
+
+.custom-marker-pin .label {
+    background-color: #d9534f;
+    /* Red */
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    white-space: nowrap;
+}
+
+/* This ::after pseudo-element creates the triangle "pointer" */
+.custom-marker-pin::after {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 10px solid #d9534f;
+    /* Must match label background */
+    /* This positions the triangle just below the label */
+    transform: translateY(-1px);
+}

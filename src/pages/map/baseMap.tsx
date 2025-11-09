@@ -27,6 +27,7 @@ import "../../styles/markers.css"
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import ProfileMenu from './component/profile/ProfileMenu';
+import "../../styles/markeras.2.css"
 
 
 
@@ -113,6 +114,7 @@ const BaseMap = () => {
       if (map.current) {
         clearPolygon();
         clearProjectPolygons();
+        clearProjectMarkers();
       }
       setSelectedProject(null);
       setTerritory(null);
@@ -123,6 +125,7 @@ const BaseMap = () => {
 
   const handleTerritorySelect = (territoryData: Territory | null) => {
     clearProjectPolygons(); // reset any previous territory's projects
+    clearProjectMarkers();
 
     if (!territoryData) {
       clearPolygon();
@@ -138,7 +141,7 @@ const BaseMap = () => {
 
     if (territoryData.projects && territoryData.projects.length > 0) {
       plotProjectPolygons(territoryData.projects);
-      // plotProjectMarkers(territoryData.projects);
+      plotProjectMarkers(territoryData.projects);
     }
     plotProjectMarkers
     setSearchResults([]);
@@ -172,27 +175,43 @@ const BaseMap = () => {
     });
   };
 
+  const clearProjectMarkers = () => {
+    const m = map.current;
+    if (!m) return;
+
+    // Remove all markers by selecting elements with the 'maplibregl-marker' class
+    const markers = document.getElementsByClassName('maplibregl-marker');
+    while (markers[0]) {
+      markers[0].parentNode?.removeChild(markers[0]);
+    }
+  };
+
   const plotProjectMarkers = (projects: any[]) => {
     const m = map.current;
     if (!m || !projects?.length) return;
 
     projects.forEach(project => {
-      const el = document.createElement('div');
-      el.className = 'custom-marker';
-
-      const body = document.createElement('div');
-      body.className = 'marker-body';
-      el.appendChild(body);
-
+      if (project.imp !== true) return;
       const img = document.createElement('img');
       img.alt = 'Marker Logo';
       img.src = "https://imgs.search.brave.com/ZR64T8UvnCixvhH621s3y3feRUCKx2UM7Qf9pV2a6tE/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2UyMDM1MTlm/MzI0ZDQyMmQzZmRh/YjJkNzA0NGE2ZTRl/YTI0NTNhZGU4NTJh/ZjFhOGFhMjJlN2Vk/NmU1NWY1ZS93d3cu/c2hpdmFsaWt2ZW50/dXJlcy5jb20v"
-      body.appendChild(img);
-      const marker = new maplibregl.Marker({
-        className: "marker-el",
-        element: el,
-        anchor: 'center'
-      }).setLngLat(project.center.coordinates)
+      const el1 = document.createElement('div');
+      el1.style.backgroundImage = `url(${img.src})`;
+      el1.style.width = '40px';
+      el1.style.height = '40px';
+      el1.style.backgroundSize = 'cover';
+      el1.style.borderRadius = '50%';
+      el1.style.border = '2px solid #fff';
+      el1.style.boxShadow = '0 0 10px rgba(0,0,0,0.3)';
+      el1.style.cursor = 'pointer';
+
+
+      new maplibregl.Marker({
+        element: el1,
+        anchor: 'bottom' // This is the crucial part!
+      })
+        .setLngLat(project.center.coordinates)
+        .setPopup(new maplibregl.Popup().setHTML(img.outerHTML))
         .addTo(m);
     });
   };
@@ -201,6 +220,7 @@ const BaseMap = () => {
     const m = map.current;
     if (!m || !projects?.length) {
       clearProjectPolygons();
+      clearProjectMarkers();
       return;
     }
 
