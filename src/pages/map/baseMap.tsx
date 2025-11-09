@@ -159,7 +159,7 @@ const BaseMap = () => {
 
       loadAllTerritoryPoints();
       addMapClickListener();
-      getUnderServedAreas();
+      // getUnderServedAreas();
     });
 
     // controls
