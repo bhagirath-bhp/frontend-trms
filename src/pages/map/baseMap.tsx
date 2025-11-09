@@ -190,11 +190,63 @@ const BaseMap = () => {
     const m = map.current;
     if (!m || !projects?.length) return;
 
+    const images = [
+      "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg",
+      "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg",
+      "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg",
+      "https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg",
+      "https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg",
+      "https://images.pexels.com/photos/534151/pexels-photo-534151.jpeg",
+      "https://images.pexels.com/photos/323775/pexels-photo-323775.jpeg",
+      "https://images.pexels.com/photos/259600/pexels-photo-259600.jpeg",
+      "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg",
+      "https://images.pexels.com/photos/259597/pexels-photo-259597.jpeg",
+      "https://images.pexels.com/photos/2462015/pexels-photo-2462015.jpeg",
+      "https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg",
+      "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg",
+      "https://images.pexels.com/photos/36367/house-building-lawn-green.jpg",
+      "https://images.pexels.com/photos/280222/pexels-photo-280222.jpeg",
+      "https://images.pexels.com/photos/259600/pexels-photo-259600.jpeg",
+      "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg",
+      "https://images.pexels.com/photos/280229/pexels-photo-280229.jpeg",
+      "https://images.pexels.com/photos/164558/pexels-photo-164558.jpeg",
+      "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg",
+      "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg",
+      "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg",
+      "https://images.pexels.com/photos/259600/pexels-photo-259600.jpeg",
+      "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg",
+      "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg",
+      "https://images.pexels.com/photos/280232/pexels-photo-280232.jpeg",
+      "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg",
+      "https://images.pexels.com/photos/1642125/pexels-photo-1642125.jpeg",
+      "https://images.pexels.com/photos/259603/pexels-photo-259603.jpeg",
+      "https://images.pexels.com/photos/534151/pexels-photo-534151.jpeg",
+      "https://images.pexels.com/photos/1834732/pexels-photo-1834732.jpeg",
+      "https://images.pexels.com/photos/259600/pexels-photo-259600.jpeg",
+      "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg",
+      "https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg",
+      "https://images.pexels.com/photos/259600/pexels-photo-259600.jpeg",
+      "https://images.pexels.com/photos/280226/pexels-photo-280226.jpeg",
+      "https://images.pexels.com/photos/280233/pexels-photo-280233.jpeg",
+      "https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg",
+      "https://images.pexels.com/photos/259597/pexels-photo-259597.jpeg",
+      "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg",
+      "https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg",
+      "https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg",
+      "https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg",
+      "https://images.pexels.com/photos/1834732/pexels-photo-1834732.jpeg",
+      "https://images.pexels.com/photos/1642125/pexels-photo-1642125.jpeg",
+      "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg",
+      "https://images.pexels.com/photos/280233/pexels-photo-280233.jpeg",
+      "https://images.pexels.com/photos/280232/pexels-photo-280232.jpeg",
+      "https://images.pexels.com/photos/280226/pexels-photo-280226.jpeg"
+    ]
     projects.forEach(project => {
       if (project.imp !== true) return;
+      const randomIndex = Math.floor(Math.random() * images.length);
       const img = document.createElement('img');
       img.alt = 'Marker Logo';
-      img.src = "https://picsum.photos/seed/picsum/100"
+      img.src = images[randomIndex];
       const el1 = document.createElement('div');
       el1.style.backgroundImage = `url(${img.src})`;
       el1.style.width = '40px';
