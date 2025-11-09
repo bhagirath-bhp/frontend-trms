@@ -43,21 +43,18 @@ export default function AreaAnalytics({ projects = [] }: any){
 
 
   return (
-    <div className="p-6 bg-white rounded-2xl shadow-md space-y-6 max-w-4xl mx-auto">
+    <div className="p-2 bg-white rounded-2xl shadow-md space-y-6  mx-auto">
       
-
-      
-
       {/* Project Status Bar Chart */}
       <div>
         {/* <h3 className="text-lg font-medium text-gray-700 mb-2">Project Status Distribution</h3> */}
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={230}>
           <BarChart data={projectStatus}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="_id" interval={0} angle={-30} textAnchor="end" height={50} />
+            <XAxis dataKey="_id" interval={0} angle={1} textAnchor="end" height={20} />
             <YAxis allowDecimals={false} />
             <Tooltip formatter={(value: number) => `${value}`} />
-            <Legend />
+            <Legend  />
             <Bar dataKey="count" fill="#8884d8" name="Projects" />
             {/* <Bar dataKey="totalUnits" fill="#82ca9d" name="Units" /> */}
           </BarChart>

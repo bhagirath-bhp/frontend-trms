@@ -1,14 +1,24 @@
 "use client"
 
+import { useEffect } from "react";
 import AreaAnalytics from "./AreaAnalytics/AreaAnalytics"
 import { BarChart2, Compass, Map, Pin, Ruler, Shapes } from "lucide-react"
+import { getsocietiesData } from "@/apis/apiService";
 
 export default function OverviewTab({ territory }: any) {
   
   
   const projects = territory.projects || []
-  console.log(projects);
-  console.log(projects.length);
+  console.log(territory);
+
+  useEffect(() => {
+   if(territory){
+    getsocietiesData(territory._id).then((data) => {
+      console.log("Societies Data:", data);
+    });
+   }
+  }, [territory]);
+  
   const totalProjects = projects.length
   const types = countBy(projects, "type")
   const statuses = countBy(projects, "status")
@@ -22,6 +32,16 @@ export default function OverviewTab({ territory }: any) {
   const bbox = computeBBox(polygon)
   const perimeter = computePerimeter(polygon)
   const projectsPerKmSq = territory.area ? (totalProjects / territory.area).toFixed(2) : null
+
+  type PeopleTypeCount = { _id: string; count: number }
+
+  const peopleByType: PeopleTypeCount[] = Object.entries(
+    (projects.people || []).reduce((acc: any, p: any) => {
+      acc[p.type] = (acc[p.type] || 0) + 1;
+      return acc;
+    }, {})
+  ).map(([type, count]) => ({ _id: type, count: count as number }));
+
 
   return (
     <div className="space-y-5">
@@ -62,10 +82,39 @@ export default function OverviewTab({ territory }: any) {
         </div>
       </Section>
 
-      <div className="min-h-screen bg-gray-50 p-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">Real Estate Analytics Dashboard</h1>
+      <div className=" bg-gray-50 px-2">
+       <div>
+         <h1 className="text-lg font-bold text-gray-800 mt-2">Real Estate Analytics Dashboard</h1>
         <AreaAnalytics projects={projects} />
+       </div>
+        {/* <div>
+         <h1 className="text-lg font-bold text-gray-800 mt-2">Real Estate Analytics Dashboard</h1>
+        <AreaAnalytics projects={projects} />
+       </div> */}
       </div>
+
+      {/* 👥 PEOPLE BY TYPE CARD */}
+      <div className="p-3 bg-secondary border border-border rounded-lg">
+        <h4 className="text-xs font-semibold text-foreground mb-3">People by Type</h4>
+
+        <div className="grid grid-cols-1 gap-2">
+          {peopleByType.map((p: any) => (
+            <div key={p._id} className="flex justify-between text-xs">
+              <span className="text-muted-foreground">{p._id}</span>
+              <span className="font-semibold">{p.count}</span>
+            </div>
+          ))}
+
+          {/* Total Count */}
+          <div className="flex justify-between text-xs mt-2 pt-2 border-t border-border">
+            <span className="text-muted-foreground">Total</span>
+            <span className="font-semibold">
+              {peopleByType.reduce((sum, p) => sum + p.count, 0)}
+            </span>
+          </div>
+        </div>
+      </div>
+
 
       {/* ---- PROJECT STATUS BREAKDOWN ---- */}
       <Section title="Project Status">
