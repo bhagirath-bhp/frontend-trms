@@ -254,7 +254,7 @@ const BaseMap = () => {
         const html = `<div style="min-width:150px">
                         <div style="font-weight:600;margin-bottom:4px">${title}</div>
                         <div style="font-size:12px;color:#444">${desc}</div>
-                        <div style="font-size:12px;color:#444">Units:${units}</div>
+                        <div style="font-size:12px;color:#444">Units: ${units}</div>
                       </div>`;
 
         popup.setLngLat(e.lngLat).setHTML(html).addTo(m);
