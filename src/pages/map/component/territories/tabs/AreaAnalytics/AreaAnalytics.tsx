@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ResponsiveContainer, Text } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ResponsiveContainer, Text, Cell } from "recharts";
 
 export default function AreaAnalytics({ projects = [] }: any){
   const [selectedArea, setSelectedArea] = useState("West Zone");
@@ -14,7 +14,7 @@ export default function AreaAnalytics({ projects = [] }: any){
   }
 
 
-  const COLORS = ["#8884d8", "#82ca9d", "#ffc658"];
+  const COLORS = ["#00008B", "#355E3B", "#ffc658"];
 
   const projectStatusMap: Record<string, { count: number; totalUnits: number }> = {};
     for (const p of projects) {
@@ -49,15 +49,18 @@ export default function AreaAnalytics({ projects = [] }: any){
       <div>
         {/* <h3 className="text-lg font-medium text-gray-700 mb-2">Project Status Distribution</h3> */}
         <ResponsiveContainer width="100%" height={230}>
-          <BarChart data={projectStatus}>
+            <BarChart data={projectStatus}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="_id" interval={0} angle={1} textAnchor="end" height={20} />
             <YAxis allowDecimals={false} />
             <Tooltip formatter={(value: number) => `${value}`} />
-            <Legend  />
-            <Bar dataKey="count" fill="#8884d8" name="Projects" />
-            {/* <Bar dataKey="totalUnits" fill="#82ca9d" name="Units" /> */}
-          </BarChart>
+            <Legend />
+            <Bar dataKey="count" name="Projects">
+              {projectStatus.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Bar>
+            </BarChart>
         </ResponsiveContainer>
       </div>
 
