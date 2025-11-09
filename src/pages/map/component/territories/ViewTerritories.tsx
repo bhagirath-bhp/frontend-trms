@@ -27,13 +27,16 @@ const tabs = [
 ]
 
 export function ViewTerritories({ territory, project }: any) {
+  if (!territory || !territory.name) return null;
 
   const [activeTab, setActiveTab] = useState("overview")
   useEffect(() => {
     if (project) {
       setActiveTab("projects")
+    }else{
+      setActiveTab("overview")
     }
-  }, [territory])
+  }, [territory, project])
 
 
   const renderContent = () => {
@@ -66,7 +69,7 @@ export function ViewTerritories({ territory, project }: any) {
     <div className=" bg-card border-r border-border flex flex-col h-screen shadow-lg">
       {/* Flash Banner */}
       <div className="w-full bg-gradient-to-r from-primary/90 to-primary text-primary-foreground shadow-md">
-        <div className="px-4 pt-8 pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="px-4 pt-9 pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 
           {/* Name + City */}
           <div>
