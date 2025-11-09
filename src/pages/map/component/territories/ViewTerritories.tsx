@@ -26,13 +26,12 @@ const tabs = [
 
 ]
 
-export function ViewTerritories({ territory, project }: any) {
+export function ViewTerritories({ territory, project }) {
   if(!territory){
     return <div className="flex items-center justify-center h-32 rounded-md border border-dashed">
       <p className="text-muted-foreground">No Territory selected.</p>
     </div>
   }
-const [newsData, setNewsData] = useState(null);
   const [activeTab, setActiveTab] = useState("overview")
   useEffect(() => {
     if (project) {
@@ -40,9 +39,7 @@ const [newsData, setNewsData] = useState(null);
     }else{
       setActiveTab("overview")
     }
-    getNewsByTerritory(territory?._id).then((data) => {
-      setNewsData(data[0].news || []);
-    });
+    
   }, [territory])
 
 
@@ -57,7 +54,7 @@ const [newsData, setNewsData] = useState(null);
       case "opportunities":
         return <OpportunitiesTab />
       case "pulses":
-        return <ViewPulses newsData={newsData} />
+        return <ViewPulses />
       case "governance":
         return <GovernanceTab />
       case "events":
