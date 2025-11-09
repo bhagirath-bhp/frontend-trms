@@ -2,7 +2,6 @@
 /* We prevent the default maplibre cursors/events on our custom element */
 .maplibregl-marker {
     cursor: pointer;
-    transition: transform 0.2s ease-in-out;
 }
 
 .maplibregl-marker:hover {
