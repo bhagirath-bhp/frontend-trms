@@ -3,7 +3,7 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Layers, Search, ZoomIn, ZoomOut, Maximize2, Sidebar, LocateFixedIcon, Map, MapPin, LogOut } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Latlng, Territory, getMapLocations, getTerritoryByLatLng, getUnderServedAreas, searchTerritory } from '../../apis/apiService';
+import { Latlng, Territory, getMapLocations, getPlaces, getTerritoryByLatLng, getUnderServedAreas, searchTerritory } from '../../apis/apiService';
 import {
   setCenter,
   setZoom,
@@ -367,6 +367,61 @@ const BaseMap = () => {
     if (src) src.setData(geojson);
   };
 
+
+  const loadAllPlaces = async () => {
+    const m = map.current;
+    if (!m) return;
+
+    // Implementation for loading all places can be added here
+    const places = await getPlaces();
+    console.log('places', places);
+
+
+    if (!places?.length) return;
+    const images = {
+      "hospital": "https://img.icons8.com/color/96/hospital-3.png",
+      "place_of_worship": "https://img.icons8.com/color/96/church.png",
+      "restaurant": "https://img.icons8.com/color/96/restaurant.png",
+      "bank": "https://img.icons8.com/color/96/bank-building.png",
+      "school": "https://img.icons8.com/color/96/school.png",
+      "police": "https://img.icons8.com/color/96/police-station.png"
+    }
+
+    // filter places by limiting max 100 places for each amenity
+    const filteredPlaces: any = Object.values(places.reduce((acc, place) => {
+      const key = place.amenity;
+      if (!acc[key]) acc[key] = [];
+      if (acc[key].length < 100) acc[key].push(place);
+      return acc;
+    }, {} as Record<string, typeof places>));
+
+    for (const place of filteredPlaces) {
+      const img = document.createElement('img');
+      img.alt = 'Marker Logo';
+      img.src = images[place.amenity];
+      const el1 = document.createElement('div');
+      el1.style.backgroundImage = `url(${img.src})`;
+      el1.style.width = '10px';
+      el1.style.height = '10px';
+      el1.style.backgroundSize = 'cover';
+      // el1.style.borderRadius = '50%';
+      el1.style.border = '1px solid #fff';
+      el1.style.boxShadow = '0 0 10px rgba(0,0,0,0.3)';
+      el1.style.cursor = 'pointer';
+
+
+      new maplibregl.Marker({
+        element: el1,
+        anchor: 'bottom' // This is the crucial part!
+      })
+        .setLngLat(place.geometry.coordinates)
+        .setPopup(new maplibregl.Popup().setHTML(img.outerHTML))
+        .addTo(m);
+
+    }
+
+  }
+
   useEffect(() => {
     if (map.current) return;
 
@@ -497,6 +552,7 @@ const BaseMap = () => {
 
       loadAllTerritoryPoints();
       addMapClickListener();
+      loadAllPlaces();
       // getUnderServedAreas();
     });
 

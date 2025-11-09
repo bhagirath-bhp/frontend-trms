@@ -62,6 +62,11 @@ export const getMapLocations = async (): Promise<Territory[]> => {
   return response.data;
 };
 
+export const getPlaces = async (): Promise<any[]> => {
+  const response = await apiClient.get("/api/v1/geodata/territories/places");
+  return response.data;
+};
+
 export const getTerritoryByLatLng = async (
   lng: number,
   lat: number
@@ -94,12 +99,12 @@ export const searchTerritory = async (
 
 export const getNewsByTerritory = async (territoryId: string): Promise<any[]> => {
   const response = await apiClient.get(`/api/v1/news/${territoryId}`);
-  return response.data; 
+  return response.data;
 }
 
 export const getUnderServedAreas = async (): Promise<any[]> => {
   const response = await apiClient.get("/api/v1/geodata/analytics/underserved");
-  return response.data; 
+  return response.data;
 }
 
 
