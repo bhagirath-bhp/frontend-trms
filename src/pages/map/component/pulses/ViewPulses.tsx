@@ -1,29 +1,18 @@
 import React, { useEffect } from 'react'
 import ViewSinglePulse from './ViewSinglePulses';
-import { getNewsByTerritory } from '@/apis/apiService';
 
 type Props = {}
 
-const ViewPulses = ({newsData}) => {
+const ViewPulses = () => {
 
   const [selectedPulses, setSelectedPulses] = React.useState(null);
  
 const defaultImage =
   "https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=1200&q=80";
 
-// Ensure every item from newsData has an image property
-const normalizedNewsData = Array.isArray(newsData)
-  ? newsData.map((item, idx) => ({
-      ...item,
-      // preserve existing image if present, otherwise use default
-      image: item?.image ?? defaultImage,
-      // ensure an id exists for React keys if missing
-      id: item?.id ?? `news-${idx}`,
-    }))
-  : [];
+
 
 const mockPulses = [
-  ...normalizedNewsData,
   {
     id: 1,
     title: "Ahmedabad Street Food Festival 2025",
