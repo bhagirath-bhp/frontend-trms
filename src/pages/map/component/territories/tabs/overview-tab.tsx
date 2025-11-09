@@ -8,7 +8,6 @@ export default function OverviewTab({ territory }: any) {
 
 
   const projects = territory.projects || []
-  console.log(territory);
 
   const totalProjects = projects.length
   const types = countBy(projects, "type")

@@ -53,7 +53,7 @@ const ViewSinglePulse = ({ pulse, setSelectedPulses }: Props) => {
 
       {/* Description */}
       <div className="mt-6">
-        <p className="text-gray-700 leading-relaxed">{pulse.description}</p>
+        <p className="text-gray-700 leading-relaxed">{pulse.description || pulse.summary}</p>
       </div>
 
       {/* Likes and Comments */}

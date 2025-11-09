@@ -20,6 +20,7 @@ interface ProjectDetailsProps {
     area?: number
     population?: number
     image?: string
+    builder?: string
   },
   setSelectedProject: (project: null) => void
 }
@@ -106,7 +107,7 @@ export default function ProjectCard({ project, setSelectedProject }: ProjectDeta
         <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
           <div>
             <h1 className="text-md font-bold text-foreground">{project.name}</h1>
-            <p className="mt-2 text-base text-sm text-muted-foreground">Builder: {project.builder ?? ""}</p>
+            <p className="mt-2  text-sm text-muted-foreground">Project builder: {project?.builder}</p>
           </div>
           <Badge className={` px-4 py-2 text-sm ${currentStatusColor}`}>{project.status}</Badge>
         </div>
