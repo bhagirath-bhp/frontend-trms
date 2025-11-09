@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { Layers, Search, ZoomIn, ZoomOut, Maximize2, Sidebar, LocateFixedIcon, Map, MapPin } from 'lucide-react';
+import { Layers, Search, ZoomIn, ZoomOut, Maximize2, Sidebar, LocateFixedIcon, Map, MapPin, LogOut } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Latlng, Territory, getMapLocations, getTerritoryByLatLng, getUnderServedAreas, searchTerritory } from '../../apis/apiService';
 import {
@@ -23,6 +23,9 @@ import ViewProjects from './component/projects/ViewProjects';
 import ViewPulses from './component/pulses/ViewPulses';
 import { ViewTerritories } from './component/territories/ViewTerritories';
 import { set } from 'date-fns';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
+import ProfileMenu from './component/profile/ProfileMenu';
 
 
 
@@ -34,7 +37,7 @@ const BaseMap = () => {
   const [loading, setLoading] = useState(false);
   const [territory, setTerritory] = useState<Territory | null>(null);
   const [allTerritories, setAllTerritories] = useState<Territory[]>([]);
-
+const navigation = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { style: mapStyle, isLayerMenuOpen: showLayerMenu, searchQuery } = useSelector((s: RootState) => s.map);
   const [showPulses, setShowPulses] = useState(false);
@@ -42,6 +45,18 @@ const BaseMap = () => {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [selectedProject, setSelectedProject] = useState<any | null>(null);
 
+ const { user, logout }: any = useAuth();
+ const navigate = useNavigate();
+
+  let userInfo;
+  // Retrieve user roles from localStorage, fallback to user?.role
+  let userRoles: string[] = [];
+  try {
+    userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+    userRoles = Array.isArray(userInfo.userRoles) ? userInfo.userRoles : [];
+  } catch (error) {
+    console.error('Error parsing userInfo from localStorage:', error);
+  }
 
   const mapStyles: Record<string, { name: string; url: string }> = {
     streets: { name: 'Streets', url: 'https://demotiles.maplibre.org/style.json' },
@@ -345,7 +360,12 @@ const handleTerritorySelect = (territoryData: Territory | null) => {
       });
     }
   };
-
+  const handleLogout = () => {
+    logout();
+    localStorage.removeItem('lastActivePath');
+    localStorage.removeItem('tabOpenStates');
+    navigation('/login');
+  };
 
   // style changes applied instantly
   useEffect(() => {
@@ -376,8 +396,12 @@ const handleTerritorySelect = (territoryData: Territory | null) => {
 
   return (
     <div className="relative w-full h-screen">
+      <div className="absolute top-4 right-10 z-40">
+        <ProfileMenu userInfo={userInfo} handleLogout={handleLogout} />
+      </div>
+
       <div ref={mapContainer} className="absolute inset-0" />
-      <div className="absolute top-4 left-20 ml-10 z-20  px-6 flex gap-2 ">
+      <div className="absolute top-4 left-5 z-20  px-6 flex gap-2 ">
         <div className='w-fit md:w-[400px]'>
           <Searchinput onSearch={handleSearch} /><GlobalLoader active={loading} />
           {
@@ -402,16 +426,16 @@ const handleTerritorySelect = (territoryData: Territory | null) => {
         </div>
       </div>
 
-      <div className='absolute top-4 left-2  w-full max-w-xs px-4 pr-8'>
-        <Badge className='text-xl bg-white hover:bg-slate-200 text-gray-800 px-2 py-1.5 rounded-lg shadow-lg border-0'>
+      {/* <div className='absolute top-4 left-2  w-full max-w-xs px-4 pr-8'>
+        <Badge className='text-xl  py-1.5 rounded-lg shadow-lg border-0'>
           Territorium
         </Badge>
-      </div>
+      </div> */}
 
       <div className='absolute top-16 md:top-4  left-[10%] md:left-[33%] w-full max-w-xs px-4 flex gap-2 '>
       </div>
       {/* Layer Switcher */}
-      <div className="absolute bottom-4 right-4 z-50">
+      {/* <div className="absolute bottom-4 right-4 z-50">
         <div className="relative">
           <Button
             onClick={() => dispatch(toggleLayerMenu())}
@@ -486,7 +510,7 @@ const handleTerritorySelect = (territoryData: Territory | null) => {
             </div>
           )}
         </div>
-      </div>
+      </div> */}
 
       {/* Zoom Controls */}
       <div className="absolute bottom-32 right-4 z-10 flex flex-col gap-2">
@@ -497,6 +521,7 @@ const handleTerritorySelect = (territoryData: Territory | null) => {
           <ZoomOut size={20} className="text-gray-700" />
         </button>
       </div>
+
 
       {/* Fullscreen Button */}
       <button onClick={handleFullscreen} className="absolute bottom-20 right-4 z-10 bg-white p-3 rounded-lg shadow-lg hover:bg-gray-50 transition-colors">

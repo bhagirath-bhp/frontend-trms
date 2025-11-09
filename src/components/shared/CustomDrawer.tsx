@@ -32,8 +32,8 @@ const CustomDrawer: React.FC<CustomDrawerProps> = ({ open, onOpenChange, childre
             direction === 'right' ? 'right-0 top-0' : ''
           } ${direction === 'bottom' ? 'bottom-0 left-0 right-0 w-full' : ''} outline-none`}
         >
-          <div className="px-4 absolute right-0  top-1 my-4 mt-auto">
-              <div className="flex gap-6 mx-auto">
+          <div className="px-4 absolute right-0 pt-2 top-1 my-4 mt-auto">
+              <div className="flex gap-6 mx-auto ">
                <div className='w-[90%]'>
                 {/* <Searchinput onSearch={handleSearch}/> */}
                </div>

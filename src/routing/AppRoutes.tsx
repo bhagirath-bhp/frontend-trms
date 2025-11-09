@@ -18,7 +18,7 @@ const getUserRoles = (): string[] => {
 
 /* Role default route mapping */
 const ROLE_DEFAULTS: Record<string, string> = {
-  SuperAdmin: '/users',
+  SuperAdmin: '/map',
 };
 
 /* Component that decides where to redirect  */
@@ -34,12 +34,13 @@ const RedirectByRole = () => {
   // Find the first matching default route
   for (const role of roles) {
     if (ROLE_DEFAULTS[role]) {
-      return <Navigate to={ROLE_DEFAULTS[role]} replace />;
+      console.log(`Redirecting ${role} to ${ROLE_DEFAULTS[role]}`);
+      return <Navigate to="/map" replace />;
     }
   }
 
   // Fallback for unknown / Guest
-  return <Navigate to="/users" replace />;
+  return <Navigate to="/map" replace />;
 };
 
 /* ────── Main router ────── */
@@ -65,7 +66,7 @@ export const AppRoutes = () => {
       />
 
       {/* Private Route */}
-      {/* <Route
+      <Route
         path="/*"
         element={
           <PrivateRoute>
@@ -75,7 +76,7 @@ export const AppRoutes = () => {
       >
         <Route index element={<RedirectByRole />} />
         <Route path="*" element={<RedirectByRole />} />
-      </Route> */}
+      </Route>
 
       <Route
         path="/map"
