@@ -194,7 +194,7 @@ const BaseMap = () => {
       if (project.imp !== true) return;
       const img = document.createElement('img');
       img.alt = 'Marker Logo';
-      img.src = "https://imgs.search.brave.com/ZR64T8UvnCixvhH621s3y3feRUCKx2UM7Qf9pV2a6tE/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvN2UyMDM1MTlm/MzI0ZDQyMmQzZmRh/YjJkNzA0NGE2ZTRl/YTI0NTNhZGU4NTJh/ZjFhOGFhMjJlN2Vk/NmU1NWY1ZS93d3cu/c2hpdmFsaWt2ZW50/dXJlcy5jb20v"
+      img.src = "https://picsum.photos/100"
       const el1 = document.createElement('div');
       el1.style.backgroundImage = `url(${img.src})`;
       el1.style.width = '40px';
