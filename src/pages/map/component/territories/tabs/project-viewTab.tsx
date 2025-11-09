@@ -9,7 +9,6 @@ interface ProjectDetailsProps {
   project: {
     _id: string
     mid: string
-    builder: string
     name: string
     type: string
     status: string
