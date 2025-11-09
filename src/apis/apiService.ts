@@ -92,7 +92,10 @@ export const searchTerritory = async (
 };
 
 
-
+export const getNewsByTerritory = async (territoryId: string): Promise<any[]> => {
+  const response = await apiClient.get(`/api/v1/news/${territoryId}`);
+  return response.data; 
+}
 
 export const getUnderServedAreas = async (): Promise<any[]> => {
   const response = await apiClient.get("/api/v1/geodata/analytics/underserved");

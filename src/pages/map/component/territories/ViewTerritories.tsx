@@ -8,7 +8,7 @@ import TrendingsTab from "./tabs/trendings-tab"
 import GovernanceTab from "./tabs/governance-tab"
 import EventsTab from "./tabs/events-tab"
 import { Building2, Users, Home, Lightbulb, TrendingUp, Shield, Calendar } from "lucide-react"
-import { Territory } from "@/apis/apiService"
+import { getNewsByTerritory, Territory } from "@/apis/apiService"
 import ViewPulses from "../pulses/ViewPulses"
 import TPTab from "./tabs/tp-tab"
 import SocietiesTab from "./tabs/societies-tab"
@@ -27,8 +27,12 @@ const tabs = [
 ]
 
 export function ViewTerritories({ territory, project }: any) {
-  if (!territory || !territory.name) return null;
-
+  if(!territory){
+    return <div className="flex items-center justify-center h-32 rounded-md border border-dashed">
+      <p className="text-muted-foreground">No Territory selected.</p>
+    </div>
+  }
+const [newsData, setNewsData] = useState(null);
   const [activeTab, setActiveTab] = useState("overview")
   useEffect(() => {
     if (project) {
@@ -36,7 +40,10 @@ export function ViewTerritories({ territory, project }: any) {
     }else{
       setActiveTab("overview")
     }
-  }, [territory, project])
+    getNewsByTerritory(territory?._id).then((data) => {
+      setNewsData(data[0].news || []);
+    });
+  }, [territory])
 
 
   const renderContent = () => {
@@ -50,7 +57,7 @@ export function ViewTerritories({ territory, project }: any) {
       case "opportunities":
         return <OpportunitiesTab />
       case "pulses":
-        return <ViewPulses />
+        return <ViewPulses newsData={newsData} />
       case "governance":
         return <GovernanceTab />
       case "events":
@@ -69,7 +76,7 @@ export function ViewTerritories({ territory, project }: any) {
     <div className=" bg-card border-r border-border flex flex-col h-screen shadow-lg">
       {/* Flash Banner */}
       <div className="w-full bg-gradient-to-r from-primary/90 to-primary text-primary-foreground shadow-md">
-        <div className="px-4 pt-9 pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="px-4 pt-11 pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 
           {/* Name + City */}
           <div>

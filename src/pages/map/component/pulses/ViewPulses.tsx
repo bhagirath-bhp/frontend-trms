@@ -1,17 +1,36 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import ViewSinglePulse from './ViewSinglePulses';
+import { getNewsByTerritory } from '@/apis/apiService';
 
 type Props = {}
 
-const ViewPulses = (props: Props) => {
+const ViewPulses = ({newsData}: Props) => {
+
   const [selectedPulses, setSelectedPulses] = React.useState(null);
+ 
+const defaultImage =
+  "https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=1200&q=80";
+
+// Ensure every item from newsData has an image property
+const normalizedNewsData = Array.isArray(newsData)
+  ? newsData.map((item, idx) => ({
+      ...item,
+      // preserve existing image if present, otherwise use default
+      image: item?.image ?? defaultImage,
+      // ensure an id exists for React keys if missing
+      id: item?.id ?? `news-${idx}`,
+    }))
+  : [];
+
 const mockPulses = [
+  ...normalizedNewsData,
   {
     id: 1,
     title: "Ahmedabad Street Food Festival 2025",
     author: "Ahmedabad Buzz",
     location: "Manek Chowk",
-    image: "https://images.unsplash.com/photo-1565958011705-44e2118b5c1b",
+    image:
+      "https://images.unsplash.com/photo-1565958011705-44e2118b5c1b?auto=format&fit=crop&w=1200&q=80",
     likes: 324,
     comments: 21,
     category: "Food & Culture",
@@ -23,7 +42,8 @@ const mockPulses = [
     title: "Local Art Exhibition: Colors of Gujarat",
     author: "Kalakar Society",
     location: "CG Road Art Gallery",
-    image: "https://images.unsplash.com/photo-1504196606672-aef5c9cefc92",
+    image:
+      "https://images.unsplash.com/photo-1504196606672-aef5c9cefc92?auto=format&fit=crop&w=1200&q=80",
     likes: 150,
     comments: 8,
     category: "Art & Exhibitions",
@@ -35,7 +55,8 @@ const mockPulses = [
     title: "Night Cycling Ride along the Riverfront",
     author: "City Riders Club",
     location: "Sabarmati Riverfront",
-    image: "https://images.unsplash.com/photo-1508609349937-5ec4ae374ebf",
+    image:
+      "https://images.unsplash.com/photo-1508609349937-5ec4ae374ebf?auto=format&fit=crop&w=1200&q=80",
     likes: 89,
     comments: 5,
     category: "Sports & Outdoor",
@@ -47,7 +68,8 @@ const mockPulses = [
     title: "Sunday Farmers’ Market Launches at Thaltej",
     author: "GreenLife Ahmedabad",
     location: "Thaltej Community Ground",
-    image: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6",
+    image:
+      "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1200&q=80",
     likes: 245,
     comments: 14,
     category: "Community",
@@ -59,7 +81,8 @@ const mockPulses = [
     title: "Startup Mixer: Innovate Ahmedabad",
     author: "TechHub India",
     location: "IIM Ahmedabad Auditorium",
-    image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df",
+    image:
+      "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=80",
     likes: 310,
     comments: 33,
     category: "Business & Innovation",
@@ -71,7 +94,8 @@ const mockPulses = [
     title: "Yoga at Sunrise – Wellness for All",
     author: "Namaste Ahmedabad",
     location: "Kankaria Lake",
-    image: "https://images.unsplash.com/photo-1552196563-55cd4e45efb3",
+    image:
+      "https://images.unsplash.com/photo-1552196563-55cd4e45efb3?auto=format&fit=crop&w=1200&q=80",
     likes: 412,
     comments: 27,
     category: "Health & Wellness",
@@ -83,7 +107,8 @@ const mockPulses = [
     title: "Garba Nights Return with Full Energy",
     author: "Cultural Vibes",
     location: "GMDC Grounds",
-    image: "https://images.unsplash.com/photo-1575224526797-5730d3a4b6b1",
+    image:
+      "https://images.unsplash.com/photo-1575224526797-5730d3a4b6b1?auto=format&fit=crop&w=1200&q=80",
     likes: 502,
     comments: 41,
     category: "Festivals",
@@ -95,7 +120,8 @@ const mockPulses = [
     title: "Clean Drive: Volunteers Revive the Riverfront",
     author: "Ahmedabad Green Team",
     location: "Sabarmati Riverfront",
-    image: "https://images.unsplash.com/photo-1556761175-4b46a572b786",
+    image:
+      "https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=1200&q=80",
     likes: 128,
     comments: 9,
     category: "Environment",
@@ -107,7 +133,8 @@ const mockPulses = [
     title: "Ahmedabad’s New Co-Working Hub Opens in Bodakdev",
     author: "UrbanSpace India",
     location: "Bodakdev",
-    image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df",
+    image:
+      "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=80",
     likes: 276,
     comments: 18,
     category: "Business & Lifestyle",
@@ -119,7 +146,8 @@ const mockPulses = [
     title: "Weekend Flea Market Brings Indie Brands Together",
     author: "City Flea Crew",
     location: "Law Garden",
-    image: "https://images.unsplash.com/photo-1556742031-c6961e8560b0",
+    image:
+      "https://images.unsplash.com/photo-1556742031-c6961e8560b0?auto=format&fit=crop&w=1200&q=80",
     likes: 195,
     comments: 12,
     category: "Shopping & Lifestyle",
@@ -131,7 +159,8 @@ const mockPulses = [
     title: "AI in Education – Panel Discussion at Nirma University",
     author: "EduConnect",
     location: "Nirma University",
-    image: "https://images.unsplash.com/photo-1581090700227-1e37b190418e",
+    image:
+      "https://images.unsplash.com/photo-1581090700227-1e37b190418e?auto=format&fit=crop&w=1200&q=80",
     likes: 234,
     comments: 15,
     category: "Technology & Education",
@@ -143,7 +172,8 @@ const mockPulses = [
     title: "Heritage Walk: Stories of Old Ahmedabad",
     author: "Heritage Foundation",
     location: "Pols of Old City",
-    image: "https://images.unsplash.com/photo-1560184897-47b6ce5f0a32",
+    image:
+      "https://images.unsplash.com/photo-1560184897-47b6ce5f0a32?auto=format&fit=crop&w=1200&q=80",
     likes: 178,
     comments: 10,
     category: "Culture & Travel",
