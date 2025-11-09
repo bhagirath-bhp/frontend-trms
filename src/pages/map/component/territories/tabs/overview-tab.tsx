@@ -33,6 +33,15 @@ export default function OverviewTab({ territory }: any) {
   const perimeter = computePerimeter(polygon)
   const projectsPerKmSq = territory.area ? (totalProjects / territory.area).toFixed(2) : null
 
+  type PeopleTypeCount = { _id: string; count: number }
+
+  const peopleByType: PeopleTypeCount[] = Object.entries(
+    (territory.people || []).reduce((acc: any, p: any) => {
+      acc[p.type] = (acc[p.type] || 0) + 1;
+      return acc;
+    }, {})
+  ).map(([type, count]) => ({ _id: type, count: count as number }));
+
   return (
     <div className="space-y-5">
 
@@ -77,18 +86,38 @@ export default function OverviewTab({ territory }: any) {
           <h1 className="text-lg font-bold text-gray-800 mt-2">Real Estate Analytics Dashboard</h1>
           <AreaAnalytics projects={projects} />
         </div>
-        <div>
-          <h1 className="text-lg font-bold text-gray-800 mt-2">Real Estate Analytics Dashboard</h1>
-          <AreaAnalytics projects={projects} />
-        </div>
+
       </div>
 
       <Section>
         <ShowTrendingPulses />
       </Section>
-      <Section>
-        <AvgPriceCard label="Average Price pr sq ft" value={territory.avg_price ? `₹${territory.avg_price} /-` : "—"} />
-      </Section>
+      
+        <div className="flex justify-between gap-3">
+          <AvgPriceCard label="Average Price pr sq ft" value={territory.avg_price ? `₹${territory.avg_price} /-` : "—"} />
+          <div className="p-3 bg-secondary border border-border rounded-lg w-[50%]">
+            <h4 className="text-xs font-semibold text-foreground mb-3">People Involved in This Area</h4>
+
+            <div className="grid grid-cols-1 gap-2">
+              {peopleByType.map((p: any) => (
+                <div key={p._id} className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">{p._id}</span>
+                  <span className="font-semibold">{p.count}</span>
+                </div>
+              ))}
+
+              {/* Total Count */}
+              <div className="flex justify-between text-xs mt-2 pt-2 border-t border-border">
+                <span className="text-muted-foreground">Total</span>
+                <span className="font-semibold">
+                  {peopleByType.reduce((sum, p) => sum + p.count, 0)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+     
 
 
       {/* ---- PROJECT STATUS BREAKDOWN ---- */}
@@ -204,7 +233,7 @@ function ShowTrendingPulses() {
 
 function AvgPriceCard({ label, value }: any) {
   return (
-    <div className="p-3 bg-secondary border border-border rounded-lg">
+    <div className="p-3 bg-secondary border border-border rounded-lg w-[50%]">
       <div className="text-xs text-muted-foreground">{label}</div>
       <div className="text-lg font-bold mt-1">{value}</div>
     </div>

@@ -102,7 +102,7 @@ export function ViewTerritories({ territory }: any) {
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex overflow-x-auto border-b border-border bg-card">
+      <div className="flex overflow-x-auto border-b border-border bg-card [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {tabs.map((tab) => {
           const Icon = tab.icon
           const isActive = activeTab === tab.id
@@ -123,7 +123,7 @@ export function ViewTerritories({ territory }: any) {
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         <div className="p-4">{renderContent()}</div>
       </div>
     </div>
