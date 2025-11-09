@@ -10,7 +10,8 @@ export interface Territory {
     type: "Point";
     coordinates: Latlng;
   };
-  geometry: any
+  geometry: any,
+  projects?: any[],
 }
 
 // Create an Axios instance with a base URL and common settings

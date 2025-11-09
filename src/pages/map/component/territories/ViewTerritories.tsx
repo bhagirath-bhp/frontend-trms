@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import OverviewTab from "./tabs/overview-tab"
 import ProfessionalsTab from "./tabs/professionals-tab"
 import ProjectsTab from "./tabs/projects-tab"
@@ -24,9 +24,15 @@ const tabs = [
 
 ]
 
-export function ViewTerritories({ territory }: any) {
+export function ViewTerritories({ territory, project }: any) {
 
   const [activeTab, setActiveTab] = useState("overview")
+  useEffect(() => {
+    if (project) {
+      setActiveTab("projects")
+    }
+  }, [territory])
+
 
   const renderContent = () => {
     switch (activeTab) {
@@ -35,7 +41,7 @@ export function ViewTerritories({ territory }: any) {
       case "professionals":
         return <ProfessionalsTab territory={territory} />
       case "projects":
-        return <ProjectsTab territory={territory} />
+        return <ProjectsTab territory={territory} project={project} />
       case "opportunities":
         return <OpportunitiesTab />
       case "pulses":

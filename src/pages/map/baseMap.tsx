@@ -33,20 +33,47 @@ const BaseMap = () => {
   const [openSidebar, setOpenSidebar] = useState(false);
   const [loading, setLoading] = useState(false);
   const [territory, setTerritory] = useState<Territory | null>(null);
-
+  const [allTerritories, setAllTerritories] = useState<Territory[]>([]);
 
   const dispatch = useDispatch<AppDispatch>();
   const { style: mapStyle, isLayerMenuOpen: showLayerMenu, searchQuery } = useSelector((s: RootState) => s.map);
   const [showPulses, setShowPulses] = useState(false);
   const [showTerritories, setShowTerritories] = useState(false);
-  const [showProjects, setShowProjects] = useState(false);
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [selectedProject, setSelectedProject] = useState<any | null>(null);
+
 
   const mapStyles: Record<string, { name: string; url: string }> = {
     streets: { name: 'Streets', url: 'https://demotiles.maplibre.org/style.json' },
     satellite: { name: 'Satellite', url: 'https://api.maptiler.com/maps/hybrid/style.json?key=get_your_own_OpIi9ZULNHzrESv6T2vL' },
     terrain: { name: 'Terrain', url: 'https://api.maptiler.com/maps/outdoor/style.json?key=get_your_own_OpIi9ZULNHzrESv6T2vL' }
   };
+
+const handleTerritorySelect = (territoryData: Territory | null) => {
+  clearProjectPolygons(); // reset any previous territory's projects
+
+  if (!territoryData) {
+    clearPolygon();
+    setDrawerOpen(false);
+    return;
+  }
+
+  setTerritory(territoryData);
+
+  if (territoryData.geometry) {
+    plotPolygon(territoryData.geometry);
+  }
+
+  if (territoryData.projects && territoryData.projects.length > 0) {
+    plotProjectPolygons(territoryData.projects);
+  }
+
+  setSearchResults([]);
+  dispatch(setSearchQuery(''));
+
+  setDrawerOpen(true);
+};
+
 
   const removeDefaultLabels = () => {
     const m = map.current;
@@ -59,12 +86,51 @@ const BaseMap = () => {
     });
   };
 
+  const clearProjectPolygons = () => {
+    const m = map.current;
+    if (!m) return;
+
+    const src = m.getSource("projects-source") as maplibregl.GeoJSONSource;
+    if (src) {
+      src.setData({
+        type: "FeatureCollection",
+        features: []
+      });
+    }
+  };
+
+  const plotProjectPolygons = (projects: any[]) => {
+    const m = map.current;
+    if (!m || !projects?.length) {
+      clearProjectPolygons();
+      return;
+    }
+
+    const features: GeoJSON.Feature<GeoJSON.Polygon>[] = projects
+      .filter(p => p.geometry)
+      .map(p => ({
+        type: "Feature",
+        geometry: p.geometry,
+        properties: { ...p }
+      }));
+
+    const src = m.getSource("projects-source") as maplibregl.GeoJSONSource;
+    if (src) {
+      src.setData({
+        type: "FeatureCollection",
+        features
+      });
+    }
+  };
+
+
+
   const loadAllTerritoryPoints = async () => {
     const m = map.current;
     if (!m) return;
 
     const items = await getMapLocations();
-
+    setAllTerritories(items);
     const geojson: GeoJSON.FeatureCollection = {
       type: 'FeatureCollection',
       features: items.map((t) => ({
@@ -91,7 +157,7 @@ const BaseMap = () => {
 
     map.current.on('styledata', () => {
       removeDefaultLabels();
-      loadAllTerritoryPoints();
+      if (!allTerritories.length) loadAllTerritoryPoints();
     });
 
     map.current.on('load', () => {
@@ -157,6 +223,54 @@ const BaseMap = () => {
         }
       });
 
+      // project polygons source
+      m.addSource("projects-source", {
+        type: "geojson",
+        data: { type: "FeatureCollection", features: [] }
+      });
+
+      // fill layer for project polygons
+      m.addLayer({
+        id: "projects-fill",
+        type: "fill",
+        source: "projects-source",
+        paint: {
+          "fill-color": "#fff6a0",
+          "fill-opacity": 0.7,
+        }
+      });
+
+      // outline
+      m.addLayer({
+        id: "projects-line",
+        type: "line",
+        source: "projects-source",
+        paint: {
+          "line-color": "#cabf00",
+          "line-width": 3
+        }
+      });
+
+      // click handler
+      m.on("click", "projects-fill", (e) => {
+        const p = e.features?.[0].properties;
+        if (!p) return;
+
+        // convert stringified JSON geometry if needed
+        const clickedProject = JSON.parse(JSON.stringify(p));
+        // store selected project
+        // you may need useState: const [selectedProject, setSelectedProject]
+        setSelectedProject(clickedProject);
+      });
+
+      m.on("mouseenter", "projects-fill", () => {
+        m.getCanvas().style.cursor = "pointer";
+      });
+      m.on("mouseleave", "projects-fill", () => {
+        m.getCanvas().style.cursor = "";
+      });
+
+
       loadAllTerritoryPoints();
       addMapClickListener();
       // getUnderServedAreas();
@@ -193,16 +307,7 @@ const BaseMap = () => {
         const lat = e.lngLat.lat;
 
         const territory = await getTerritoryByLatLng(lng, lat);
-        if (!territory) {
-          clearPolygon();
-          setDrawerOpen(false);
-          return;
-        }
-        setTerritory(territory);
-
-        if (territory?.geometry) {
-          plotPolygon(territory.geometry);
-        }
+        handleTerritorySelect(territory);
       } finally {
         setLoading(false);
       }
@@ -272,7 +377,7 @@ const BaseMap = () => {
   return (
     <div className="relative w-full h-screen">
       <div ref={mapContainer} className="absolute inset-0" />
-      <div className="absolute top-4 left-16 z-20  px-4 flex gap-2 ">
+      <div className="absolute top-4 left-20 ml-10 z-20  px-6 flex gap-2 ">
         <div className='w-fit md:w-[400px]'>
           <Searchinput onSearch={handleSearch} /><GlobalLoader active={loading} />
           {
@@ -284,17 +389,7 @@ const BaseMap = () => {
                   onClick={async () => {
                     setLoading(true);
                     const territory = await getTerritoryByLatLng(result.center.coordinates[0], result.center.coordinates[1]);
-                    if (!territory) {
-                      clearPolygon();
-                      setDrawerOpen(false);
-                      return;
-                    }
-                    setTerritory(territory);
-
-                    if (territory.geometry) {
-                      plotPolygon(territory.geometry);
-                    }
-                    setSearchResults([]);
+                    handleTerritorySelect(territory);
                     setLoading(false);
                   }}
                 >
@@ -307,9 +402,9 @@ const BaseMap = () => {
         </div>
       </div>
 
-      <div className='absolute top-4 left-4  w-full max-w-xs px-4 '>
-        <Badge className='bg-white hover:bg-slate-200 text-gray-800 px-2 py-2 rounded-lg shadow-lg border-0' onClick={() => setOpenSidebar(!openSidebar)}>
-          <Sidebar />
+      <div className='absolute top-4 left-2  w-full max-w-xs px-4 pr-8'>
+        <Badge className='text-xl bg-white hover:bg-slate-200 text-gray-800 px-2 py-1.5 rounded-lg shadow-lg border-0'>
+          Territorium
         </Badge>
       </div>
 
@@ -415,13 +510,7 @@ const BaseMap = () => {
       </CustomDrawer>
       <CustomDrawer open={drawerOpen} onOpenChange={setDrawerOpen} handleSearch={handleSearch} direction="left">
         <div>
-          <ViewTerritories territory={territory} />
-        </div>
-      </CustomDrawer>
-
-      <CustomDrawer open={showProjects} onOpenChange={setShowProjects} handleSearch={handleSearch} direction="left">
-        <div >
-          <ViewProjects />
+          <ViewTerritories territory={territory} project={selectedProject} />
         </div>
       </CustomDrawer>
 

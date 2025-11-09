@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Home, DollarSign, Download, MapPin, Search } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import ProjectCard from "./project-viewTab"
 
 const projectsData = [
@@ -101,7 +101,7 @@ const statusColors = {
   Inactive: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
 }
 
-export default function ProjectsTab({ territory }: any) {
+export default function ProjectsTab({ territory, project }: any) {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedStatus, setSelectedStatus] = useState<string>("all")
   const [projects, setProjects] = useState(territory.projects)
@@ -116,6 +116,14 @@ export default function ProjectsTab({ territory }: any) {
 
     return matchesSearch && matchesStatus
   })
+
+  useEffect(() => {
+    if (project) {
+      setSelectedProject(project)
+    }
+  }, [territory])
+
+
   return (
     <div className="space-y-3">
       {selectedProject ?
