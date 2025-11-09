@@ -168,6 +168,7 @@ const handleTerritorySelect = (territoryData: Territory | null) => {
       center: [72.5714, 23.0225],
       zoom: 12,
       attributionControl: false,
+      
     });
 
     map.current.on('styledata', () => {
@@ -178,7 +179,7 @@ const handleTerritorySelect = (territoryData: Territory | null) => {
     map.current.on('load', () => {
       const m = map.current;
       if (!m) return;
-
+    
       // territory points
       m.addSource('territories', {
         type: 'geojson',
@@ -396,7 +397,7 @@ const handleTerritorySelect = (territoryData: Territory | null) => {
 
   return (
     <div className="relative w-full h-screen">
-      <div className="absolute top-4 right-10 z-40">
+      <div className="absolute top-4 right-5 z-40">
         <ProfileMenu userInfo={userInfo} handleLogout={handleLogout} />
       </div>
 
@@ -425,13 +426,6 @@ const handleTerritorySelect = (territoryData: Territory | null) => {
           }
         </div>
       </div>
-
-      {/* <div className='absolute top-4 left-2  w-full max-w-xs px-4 pr-8'>
-        <Badge className='text-xl  py-1.5 rounded-lg shadow-lg border-0'>
-          Territorium
-        </Badge>
-      </div> */}
-
       <div className='absolute top-16 md:top-4  left-[10%] md:left-[33%] w-full max-w-xs px-4 flex gap-2 '>
       </div>
       {/* Layer Switcher */}
