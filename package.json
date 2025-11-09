@@ -5,10 +5,10 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "build:dev": "vite build --mode development",
-    "build:staging": "vite build --mode staging",
+    "dev": "node init && vite",
+    "build": "node init && vite build",
+    "build:dev": "node init && vite build --mode development",
+    "build:staging": "node init && vite build --mode staging",
     "lint": "eslint .",
     "preview": "vite preview"
   },
