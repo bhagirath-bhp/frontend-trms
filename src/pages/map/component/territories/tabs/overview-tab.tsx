@@ -36,7 +36,7 @@ export default function OverviewTab({ territory }: any) {
   type PeopleTypeCount = { _id: string; count: number }
 
   const peopleByType: PeopleTypeCount[] = Object.entries(
-    (projects.people || []).reduce((acc: any, p: any) => {
+    (territory.people || []).reduce((acc: any, p: any) => {
       acc[p.type] = (acc[p.type] || 0) + 1;
       return acc;
     }, {})
@@ -44,6 +44,7 @@ export default function OverviewTab({ territory }: any) {
 
 
   return (
+    
     <div className="space-y-5">
 
       {/* ---- TOP SUMMARY ---- */}
@@ -95,7 +96,7 @@ export default function OverviewTab({ territory }: any) {
 
       {/* 👥 PEOPLE BY TYPE CARD */}
       <div className="p-3 bg-secondary border border-border rounded-lg">
-        <h4 className="text-xs font-semibold text-foreground mb-3">People by Type</h4>
+        <h4 className="text-xs font-semibold text-foreground mb-3">People Involved in This Area</h4>
 
         <div className="grid grid-cols-1 gap-2">
           {peopleByType.map((p: any) => (
