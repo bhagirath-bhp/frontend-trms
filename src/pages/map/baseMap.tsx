@@ -194,7 +194,7 @@ const BaseMap = () => {
       if (project.imp !== true) return;
       const img = document.createElement('img');
       img.alt = 'Marker Logo';
-      img.src = "https://picsum.photos/100"
+      img.src = "https://picsum.photos/seed/picsum/100"
       const el1 = document.createElement('div');
       el1.style.backgroundImage = `url(${img.src})`;
       el1.style.width = '40px';
